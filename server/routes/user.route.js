@@ -5,9 +5,11 @@ import { isLoggedIn } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.get("/logout", logout);
+router.post("/auth/register", register);
+router.post("/auth/login", login);
+router.get("/auth/logout", logout);
 router.get("/me", isLoggedIn, getProfile);
+
+
 
 export default router;

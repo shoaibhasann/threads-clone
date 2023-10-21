@@ -160,7 +160,7 @@ const logout = asyncHandler(async (req, res, next) => {
 
 /**
  *  @GET_PROFILE
- *  @ROUTE @GET {{URL} /api/v1/auth/me}
+ *  @ROUTE @GET {{URL} /api/v1/me}
  *  @ACESS (Public)
  */
 const getProfile = asyncHandler(async (req, res, next) => {

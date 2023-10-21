@@ -12,8 +12,8 @@ app.use(express.json());
 // Middleware for parsing cookies
 app.use(cookieParser());
 
-// Handle user routes
-app.use("/api/v1/auth", userRoutes);
+// Handle authentication routes
+app.use("/api/v1", userRoutes);
 
 // Handle wildcard routes
 app.all("*", (req, res) => {
