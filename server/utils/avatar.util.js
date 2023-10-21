@@ -1,7 +1,7 @@
 import { createCanvas } from "canvas";
 
 const generateDefaultAvatar = async (firstName) => {
-  const canvas = createCanvas(250, 250);
+  const canvas = createCanvas(200, 200);
   const ctx = canvas.getContext("2d");
 
   // Define background colors
@@ -18,7 +18,7 @@ const generateDefaultAvatar = async (firstName) => {
     backgroundColors[Math.floor(Math.random() * backgroundColors.length)];  
 
     // Set background color
-    ctx.fillStyle(randomColor);
+    ctx.fillStyle = randomColor;
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
     // Draw centered text
