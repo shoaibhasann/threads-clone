@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
+import JWT from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
@@ -75,7 +76,27 @@ userSchema.pre("save", async function (next){
     } catch (err){
         return next(err);
     }
-})
+});
+
+// User schema pre build methods
+userSchema.methods.generateToken = async function (){
+  try {
+    return await JWT.sign(
+      {
+        id: this._id,
+        email: this.email,
+        role: this._role,
+        subscription: this.subscription,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRY
+      }
+    )
+  } catch (error) {
+    throw error
+  }
+}
 
 const userModel = model("User", userSchema);
 
