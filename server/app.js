@@ -1,12 +1,16 @@
 import express from "express";
 import userRoutes from "./routes/user.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import cookieParser from "cookie-parser";
 
 // create an server instance of express
 const app = express();
 
 // Middleware for parsing request
 app.use(express.json());
+
+// Middleware for parsing cookies
+app.use(cookieParser());
 
 // Handle user routes
 app.use("/api/v1/auth", userRoutes);

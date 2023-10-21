@@ -15,28 +15,35 @@ const cookieOptions = {
 }
 
 /**
- *  @REGISTER_USER
+ *  @REGISTER
  *  @ROUTE @POST {{URL} /api/v1/auth/register}
  *  @ACESS (Public)
  */
 const register = asyncHandler(async (req, res, next) => {
 
-    console.log(req.body);
-    const { username, email, password } = req.body;
+    const { fullname, username, email, password } = req.body;
 
-    if(!username || !email || !password){
+    if(!fullname || !username || !email || !password){
         return next(new AppError("All fields are mandatory", 400));
     }
 
-    // check user exists already
-    const userExists = await userModel.findOne({ email: email });
+    // check username exists already
+    const usernameExists = await userModel.findOne({ username });
 
-    if(userExists){
+    if(usernameExists){
+        return next(new AppError("Username already exists", 400));
+    }
+
+    // check email exists already
+    const emailExists = await userModel.findOne({ email });
+
+    if(emailExists){
         return next(new AppError("Email already exists", 400));
     }
 
     // Create new user
     const user = await userModel.create({
+        fullname,
         username,
         email,
         password,
@@ -91,6 +98,91 @@ const register = asyncHandler(async (req, res, next) => {
     });
 })
 
+/**
+ *  @LOGIN
+ *  @ROUTE @POST {{URL} /api/v1/auth/login}
+ *  @ACESS (Public)
+ */
+const login = asyncHandler(async (req, res, next) => {
+    const { username, password } = req.body;
+
+    if(!username || !password){
+        return next(new AppError("All fields are mandatory", 400));
+    }
+
+    const userExists = await userModel.findOne({ username }).select("+password");
+
+    if(!userExists){
+        return next(new AppError("Username doesn't exists", 400));
+    }
+
+    const comparePassword = await userExists.comparePassword(password);
+
+    if(!comparePassword){
+        return next(new AppError("Password doesn't match, please enter correct password", 400));
+    }
+
+    userExists.password = undefined;
+
+    // Generate token 
+    const token = await userExists.generateToken();
+    
+    res.cookie("token", token , cookieOptions);
+
+    res.status(200).json({
+        success: true,
+        message: "Loggedin successfully",
+        userExists
+    });
+
+})
+
+/**
+ *  @LOGOUT
+ *  @ROUTE @GET {{URL} /api/v1/auth/logout}
+ *  @ACESS (Public)
+ */
+const logout = asyncHandler(async (req, res, next) => {
+
+    res.cookie("token", null, {
+      sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
+      secure: process.env.NODE_ENV === "Development" ? false : true,
+      maxAge: 0,
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Logged out successfully!"
+    })
+
+});
+
+/**
+ *  @GET_PROFILE
+ *  @ROUTE @GET {{URL} /api/v1/auth/me}
+ *  @ACESS (Public)
+ */
+const getProfile = asyncHandler(async (req, res, next) => {
+    const { id } = req.user;
+
+    const user = await userModel.findById(id);
+
+    if(!user){
+        return next(new AppError("User not found", 400));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Profile fetched successfully!",
+        user
+    });
+});
+
+
 export {
-    register
+    register,
+    login,
+    logout,
+    getProfile
 }

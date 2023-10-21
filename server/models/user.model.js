@@ -4,13 +4,20 @@ import JWT from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
+    fullname: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: [5, "fullname must be at least 5 characters long"],
+      maxLength: [25, "fullname cannot be more than 25 characters long"],
+    },
 
     username: {
       type: String,
       required: true,
       trim: true,
       minLength: [5, "username must be at least 5 characters long"],
-      maxLength: [20, "username cannot be more than 20 characters long"],
+      maxLength: [15, "username cannot be more than 15 characters long"],
     },
 
     email: {
@@ -63,40 +70,49 @@ const userSchema = new Schema(
 );
 
 // Pre save middleware for password hashing
-userSchema.pre("save", async function (next){
-    if(!this.isModified("password")){
-        return next();
-    }
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
 
-    try{
-        const hashedPassword = await bcrypt.hash(this.password, 10);
+  try {
+    const hashedPassword = await bcrypt.hash(this.password, 10);
 
-        this.password = hashedPassword;
-        next();
-    } catch (err){
-        return next(err);
-    }
+    this.password = hashedPassword;
+    next();
+  } catch (err) {
+    return next(err);
+  }
 });
 
+// Compare password method to compare hash password with normal password
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  try {
+    return await bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    throw error;
+  }
+};
+
 // User schema pre build methods
-userSchema.methods.generateToken = async function (){
+userSchema.methods.generateToken = async function () {
   try {
     return await JWT.sign(
       {
         id: this._id,
         email: this.email,
-        role: this._role,
+        role: this.role,
         subscription: this.subscription,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIRY
+        expiresIn: process.env.JWT_EXPIRY,
       }
-    )
+    );
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
 const userModel = model("User", userSchema);
 
