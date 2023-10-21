@@ -61,6 +61,16 @@ const userSchema = new Schema(
       status: String,
     },
 
+    followers: [{
+      type: Schema.Types.ObjectId, 
+      ref: "User"
+    }],
+
+    following: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
   },
