@@ -1,4 +1,5 @@
 import express from "express";
+import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
@@ -13,6 +14,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Handle authentication routes
+app.use("/api/v1/auth", authRoutes);
+
+// Handle user routes
 app.use("/api/v1", userRoutes);
 
 // Handle wildcard routes
