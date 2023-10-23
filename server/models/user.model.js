@@ -62,7 +62,7 @@ const userSchema = new Schema(
       status: String,
     },
 
-    followers: [{
+    follower: [{
       type: Schema.Types.ObjectId, 
       ref: "User"
     }],

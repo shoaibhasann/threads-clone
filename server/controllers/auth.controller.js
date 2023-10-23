@@ -66,7 +66,7 @@ const register = asyncHandler(async (req, res, next) => {
   // Upload default avatar to the cloudinary
   try {
     const result = await cloudinary.v2.uploader.upload(tempFilePath, {
-      folder: "Blog_Users",
+      folder: "SpeakWave_Users",
       width: 250,
       height: 250,
       gravity: "faces",
