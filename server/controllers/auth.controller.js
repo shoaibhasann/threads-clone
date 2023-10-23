@@ -6,6 +6,7 @@ import generateDefaultAvatar from "../utils/avatar.util.js";
 import path from "path";
 import fs from "fs/promises";
 
+
 // Setting cookie options
 const cookieOptions = {
     maxAge: 7 * 60 * 60 * 1000, // Valid for 7 days
@@ -159,30 +160,68 @@ const logout = asyncHandler(async (req, res, next) => {
 });
 
 /**
- *  @GET_PROFILE
- *  @ROUTE @GET {{URL} /api/v1/me}
+ *  @CHANGE_PASSWORD
+ *  @ROUTE @PUT {{URL} /api/v1/auth/change-password}
  *  @ACESS (Public)
  */
-const getProfile = asyncHandler(async (req, res, next) => {
+const changePassword = asyncHandler(async (req, res, next) => {
     const { id } = req.user;
+    const { oldPassword, newPassword } = req.body;
 
-    const user = await userModel.findById(id);
+    if(!oldPassword || !newPassword){
+        return next(new AppError("All fields are mandatory", 400));
+    }
 
-    if(!user){
+    if(oldPassword === newPassword){
+        return next(new AppError("Old password can't be same as the new password", 400));
+    }
+
+    const userExists = await userModel.findById(id).select("+password");
+
+    if(!userExists){
         return next(new AppError("User not found", 400));
     }
 
+    const passwordMatch = await userExists.comparePassword(oldPassword);
+
+    if(!passwordMatch){
+        return next(new AppError("Old password is incorrect", 401));
+    }
+
+    userExists.password = newPassword;
+
+    await userExists.save();
+
     res.status(200).json({
         success: true,
-        message: "Profile fetched successfully!",
-        user
+        message: "Password updated successfully",
     });
+})
+
+/**
+ *  @FORGOT_PASSWORD
+ *  @ROUTE @POST {{URL} /api/v1/auth/forgot-password}
+ *  @ACESS (Public)
+ */
+const forgotPassword = asyncHandler(async (req, res, next) => {
+    const { email } = req.body;
+
+    if(!email){
+        return next(new AppError("Email is required", 400));
+    }
+
+    const emailExists = await userModel.findOne({ email });
+
+    if(!emailExists){
+        return next(new AppError("Email doesn't exists", 400))
+    }
 });
+
 
 
 export {
     register,
     login,
     logout,
-    getProfile
+    changePassword,
 }

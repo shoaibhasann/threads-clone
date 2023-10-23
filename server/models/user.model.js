@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken";
+import crypto from "crypto";
 
 const userSchema = new Schema(
   {
@@ -104,7 +105,7 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
   }
 };
 
-// User schema pre build methods
+// Generate JWT token
 userSchema.methods.generateToken = async function () {
   try {
     return await JWT.sign(
@@ -123,6 +124,20 @@ userSchema.methods.generateToken = async function () {
     throw error;
   }
 };
+
+// Generate reset password token
+userSchema.methods.generatePasswordToken = async function () { 
+  try {
+    const token = crypto.randomBytes(20).toString("hex");
+
+    this.resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+    this.resetPasswordExpiry = Date.now() + 15 * 60 * 1000 // 15 minutes from now
+
+    return token;
+  } catch (error) {
+    throw error
+  }
+}
 
 const userModel = model("User", userSchema);
 
