@@ -34,7 +34,7 @@ const editProfile = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
   const { fullname, username, email } = req.body;
 
-  if(email){
+  if (email) {
     return next(new AppError("Email change are not allowed", 400));
   }
 
@@ -52,9 +52,7 @@ const editProfile = asyncHandler(async (req, res, next) => {
     const usernameExists = await userModel.findOne({ username });
 
     if (usernameExists) {
-      return next(
-        new AppError("Username already taken", 400)
-      );
+      return next(new AppError("Username already taken", 400));
     }
 
     user.username = username;
@@ -111,11 +109,11 @@ const followUser = asyncHandler(async (req, res, next) => {
   // Check if the user to follow exists
   const userToFollow = await userModel.findById(userId);
 
-  if(!userToFollow){
+  if (!userToFollow) {
     return next(new AppError("User not found", 404));
   }
 
-  if(currentUser.following.includes(userId)){
+  if (currentUser.following.includes(userId)) {
     return next(new AppError("You already following this user"));
   }
 
@@ -130,9 +128,8 @@ const followUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "You are now following the user"
-  })
-
+    message: "You are now following the user",
+  });
 });
 
 /**
@@ -142,7 +139,7 @@ const followUser = asyncHandler(async (req, res, next) => {
  */
 const unfollowUser = asyncHandler(async (req, res, next) => {
   const { userId } = req.params; //User ID to unfollow
-  
+
   const { id } = req.user;
 
   const currentUser = await userModel.findById(id);
@@ -150,30 +147,30 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
   // Check if the user to unfollow exists
   const userToUnfollow = await userModel.findById(userId);
 
-  if(!userToUnfollow){
+  if (!userToUnfollow) {
     return next(new AppError("User not found", 404));
   }
 
-  if(!currentUser.following.includes(userId)){
+  if (!currentUser.following.includes(userId)) {
     return next(new AppError("You aren't following this user", 400));
   }
 
   // Remove the user from the following's array of current user
-  currentUser.following = currentUser.following.filter(id => id.toString() !== userId.toString());
+  currentUser.following = currentUser.following.filter(
+    (id) => id.toString() !== userId.toString()
+  );
   await currentUser.save();
 
   // Remove the current user from the followers's array of user to unfollow
-  userToUnfollow.follower = userToUnfollow.follower.filter(id => id.toString !== currentUser._id.toString());
+  userToUnfollow.follower = userToUnfollow.follower.filter(
+    (id) => id.toString !== currentUser._id.toString()
+  );
   await userToUnfollow.save();
 
   res.status(200).json({
     success: true,
-    message: "You have unfollowed the user"
-  })
-
-
-  
-
+    message: "You have unfollowed the user",
+  });
 });
 
 export { getProfile, editProfile, followUser, unfollowUser };
