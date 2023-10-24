@@ -5,6 +5,7 @@ import {
   createPost,
   editComment,
   editPost,
+  fetchFeed,
   getAllPosts,
   getPost,
   removeComment,
@@ -13,6 +14,8 @@ import {
 import upload from "../middlewares/multer.middleware.js";
 
 const router = Router();
+
+router.get("/feed", isLoggedIn, fetchFeed);
 
 // Post related routes
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
@@ -25,5 +28,6 @@ router.delete("/:id", isLoggedIn, removePost);
 router.post("/:postId/comment", isLoggedIn, addComment);
 router.put("/:commentId/comment", isLoggedIn, editComment);
 router.delete("/:postId/comment/:commentId", isLoggedIn, removeComment);
+
 
 export default router;

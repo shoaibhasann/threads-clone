@@ -82,7 +82,7 @@ const getAllPosts = asyncHandler(async (req, res, next) => {
 
 
 /**
- *  @READ_POST
+ *  @GET_POST_BY_ID
  *  @ROUTE @GET {{URL} /api/v1/posts/:id}
  *  @ACESS (Authenticated)
  */
@@ -108,7 +108,7 @@ const getPost = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Post fetched successfully",
-      post,
+      post
     });
  
 });
@@ -320,6 +320,42 @@ const removeComment = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+/**
+ *  @FETCH_FEED
+ *  @ROUTE @GET /api/v1/posts/feed
+ *  @ACESS (Authenticated)
+ */
+const fetchFeed = asyncHandler(async (req, res, next) => {
+   const { id } = req.user;
+
+   const user = await userModel.findById(id);
+
+   if(!user){
+    return next(new AppError("User not found", 404));
+   }
+
+   const followingUsers = user.following;
+
+   if(followingUsers.length === 0){
+    return next(new AppError("You aren't following anyone.", 400));
+   }
+
+   const posts = await postModel.find({ user: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("user", "username avatar");
+
+   if(posts.length === 0){
+    return next(new AppError("Feed post not found", 404));
+   }
+
+   res.status(200).json({
+    success: true,
+    message: "Feed fetched successfully.",
+    posts
+   });
+});
+
+
+
 export {
   createPost,
   getPost,
@@ -328,5 +364,6 @@ export {
   getAllPosts,
   addComment,
   editComment,
-  removeComment
+  removeComment,
+  fetchFeed
 };
