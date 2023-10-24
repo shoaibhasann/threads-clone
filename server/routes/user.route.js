@@ -7,8 +7,8 @@ const router = Router();
 
 router.get("/me", isLoggedIn, getProfile);
 router.put("/edit-profile", isLoggedIn, upload.single("avatar"), editProfile);
-router.post("/users/:userId/follow", isLoggedIn, followUser);
-router.post("/users/:userId/unfollow", isLoggedIn, unfollowUser);
+router.get("/users/:userId/follow", isLoggedIn, followUser);
+router.get("/users/:userId/unfollow", isLoggedIn, unfollowUser);
 
 
 export default router;

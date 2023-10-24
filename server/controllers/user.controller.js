@@ -96,10 +96,11 @@ const editProfile = asyncHandler(async (req, res, next) => {
 
 /**
  *  @FOLLOW_USER
- *  @ROUTE @POST {{URL} /api/v1/users/:userId/follow}
+ *  @ROUTE @GET {{URL} /api/v1/users/:userId/follow}
  *  @ACESS (Public)
  */
 const followUser = asyncHandler(async (req, res, next) => {
+
   const { userId } = req.params; // User ID of the user to follow
 
   const { id } = req.user;
@@ -134,7 +135,7 @@ const followUser = asyncHandler(async (req, res, next) => {
 
 /**
  *  @UNFOLLOW_USER
- *  @ROUTE @POST {{URL} /api/v1/users/:userId/unfollow}
+ *  @ROUTE @GET {{URL} /api/v1/users/:userId/unfollow}
  *  @ACESS (Public)
  */
 const unfollowUser = asyncHandler(async (req, res, next) => {
@@ -163,7 +164,7 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
 
   // Remove the current user from the followers's array of user to unfollow
   userToUnfollow.follower = userToUnfollow.follower.filter(
-    (id) => id.toString !== currentUser._id.toString()
+    followerId => followerId.toString() !== currentUser._id.toString()
   );
   await userToUnfollow.save();
 

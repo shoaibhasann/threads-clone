@@ -2,12 +2,11 @@ import { Schema, model } from "mongoose";
 
 const postSchema = new Schema(
   {
-
     title: {
       type: String,
       required: true,
-      trim: true, 
-      maxLength: 100, 
+      trim: true,
+      maxLength: 100,
     },
 
     description: {
@@ -26,33 +25,22 @@ const postSchema = new Schema(
     },
 
     reactions: [
-        {
-            user: {
-                type: Schema.Types.ObjectId,
-                ref: "User"
-            },
-            type: {
-                type: String,
-                enum: ["LIKE", "HEART", "LAUGH", "SUPPORT", "WOW", "SAD"]
-            }
-        }
-    ],
-
-    comments: [
       {
         user: {
           type: Schema.Types.ObjectId,
           ref: "User",
         },
-        text: {
+        type: {
           type: String,
-          required: true,
-          maxLength: 200, // Max length of 200 characters for comments
+          enum: ["LIKE", "HEART", "LAUGH", "SUPPORT", "WOW", "SAD"],
         },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
+      },
+    ],
+
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Comment",
       },
     ],
 
