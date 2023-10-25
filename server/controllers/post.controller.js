@@ -1,6 +1,5 @@
 import postModel from "../models/post.model.js";
 import userModel from "../models/user.model.js";
-import commentModel from "../models/comment.model.js";
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import AppError from "../utils/error.util.js";
 import fs from "fs/promises";
@@ -192,136 +191,6 @@ const removePost = asyncHandler(async (req, res, next) => {
 
 
 /**
- *  @ADD_COMMENT
- *  @ROUTE @POST {{URL} /api/v1/posts/:postId/comment}
- *  @ACESS (Authenticated)
- */
-const addComment = asyncHandler(async (req, res, next) => {
-
-  const { postId } = req.params;
-  const { comment } = req.body;
-
-    // Find the post by its ID
-    const post = await postModel.findById(postId);
-
-    if (!post) {
-      return next(new AppError("Post not found", 404));
-    }
-
-    // Create a new comment document
-    const newComment = await commentModel.create({
-      user: req.user.id, // Reference to the user
-      text: comment,
-    });
-
-    // Check if the 'comments' property exists in the 'post' object
-    if (!post.comments) {
-      post.comments = [];
-    }
-
-    // Associate the comment with the post
-    post.comments.push(newComment);
-
-    // Save the updated post document
-    await post.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Comment added successfully.",
-      post,
-    });
- 
-});
-
-
-/**
- *  @EDIT_COMMENT
- *  @ROUTE @PUT /api/v1/posts/:commentId/comment
- *  @ACESS (Authenticated)
- */
-const editComment = asyncHandler(async (req, res, next) => {
-  const { commentId } = req.params;
-  const { text } = req.body;
-
-  if(!text){
-    return next(new AppError("Comment text is required", 400));
-  }
-
-    // Find the comment by its ID
-    const comment = await commentModel.findById(commentId);
-
-    if (!comment) {
-      return next(new AppError("Comment not found", 404));
-    }
-
-    // Check if the user making the request is the owner of the comment
-    if (comment.user.toString() !== req.user.id) {
-      return next(new AppError("Permission denied", 403));
-    }
-
-    // Update the comment text
-    comment.text = text;
-
-    await comment.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Comment updated successfully",
-      comment,
-    });
-});
-
-/**
- *  @DELETE_COMMENT
- *  @ROUTE @DELETE /api/v1/posts/:postId/comment/:commentId
- *  @ACESS (Authenticated)
- */
-const removeComment = asyncHandler(async (req, res, next) => {
-  const { postId, commentId } = req.params;
-
-  const post = await postModel.findById(postId);
-
-  if (!post) {
-    return next(new AppError("Post not found", 404));
-  }
-
-  const comment = await commentModel.findById(commentId);
-
-  console.log(comment);
-
-  if(!comment){
-    return next(new AppError("Comment not found", 404));
-  }
-
-  // Find the index of the specific comment by its ID
-  const commentIndex = post.comments.findIndex(
-    (element) => element._id.toString() === commentId
-  );
-
-  if (commentIndex === -1) {
-    return next(new AppError("Comment not found", 404));
-  }
-
-  // Check if the comment exists and if the user making the request is the owner of the comment
-  if (comment.user && comment.user.toString() !== req.user.id) {
-    return next(new AppError("Permission denied", 403));
-  }
-
-  // Remove the comment
-  post.comments.splice(commentIndex, 1); // Remove the comment at the specified index
-  await post.save();
-
-  // Remove comment from comment model
-  await commentModel.findByIdAndDelete(commentId);
-
-  res.status(200).json({
-    success: true,
-    message: "Comment deleted successfully.",
-  });
-});
-
-
-/**
  *  @FETCH_FEED
  *  @ROUTE @GET /api/v1/posts/feed
  *  @ACESS (Authenticated)
@@ -355,15 +224,11 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
 });
 
 
-
 export {
   createPost,
   getPost,
   editPost,
   removePost,
   getAllPosts,
-  addComment,
-  editComment,
-  removeComment,
   fetchFeed
 };
