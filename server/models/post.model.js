@@ -26,14 +26,8 @@ const postSchema = new Schema(
 
     reactions: [
       {
-        user: {
-          type: Schema.Types.ObjectId,
-          ref: "User",
-        },
-        type: {
-          type: String,
-          enum: ["LIKE", "HEART", "LAUGH", "SUPPORT", "WOW", "SAD"],
-        },
+        type: Schema.Types.ObjectId,
+        ref: "Reaction",
       },
     ],
 
@@ -48,6 +42,18 @@ const postSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+
+    numberOfComments: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    numberOfReactions: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
   },
   {

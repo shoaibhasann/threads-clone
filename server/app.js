@@ -3,6 +3,7 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
+import reactionRoutes from "./routes/reaction.route.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import cookieParser from "cookie-parser";
 
@@ -26,6 +27,9 @@ app.use("/api/v1/posts", postRoutes);
 
 // Handle post comment routes
 app.use("/api/v1/comment", commentRoutes);
+
+// Handle post reaction routes
+app.use("/api/v1/reaction", reactionRoutes);
 
 // Handle wildcard routes
 app.all("*", (req, res) => {

@@ -25,15 +25,14 @@ const addComment = asyncHandler(async (req, res, next) => {
     text: comment,
   });
 
-  // Check if the 'comments' property exists in the 'post' object
   if (!post.comments) {
     post.comments = [];
   }
 
-  // Associate the comment with the post
   post.comments.push(newComment);
 
-  // Save the updated post document
+  post.numberOfComments = post.comments.length;
+
   await post.save();
 
   res.status(200).json({
@@ -49,6 +48,7 @@ const addComment = asyncHandler(async (req, res, next) => {
  *  @ACESS (Authenticated)
  */
 const editComment = asyncHandler(async (req, res, next) => {
+  
   const { commentId } = req.params;
   const { text } = req.body;
 
@@ -116,6 +116,9 @@ const removeComment = asyncHandler(async (req, res, next) => {
 
   // Remove the comment
   post.comments.splice(commentIndex, 1); // Remove the comment at the specified index
+
+  post.numberOfComments = post.comments.length;
+  
   await post.save();
 
   // Remove comment from comment model

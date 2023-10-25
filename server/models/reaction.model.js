@@ -9,8 +9,10 @@ const reactionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+}, {
+  timestamps: true
 });
 
-const rectModel = model("Reaction", reactionSchema);
+const reactionModel = model("Reaction", reactionSchema);
 
-export default rectModel;
+export default reactionModel;

@@ -65,7 +65,19 @@ const createPost = asyncHandler(async (req, res, next) => {
  * @ACCESS (Public)
  */
 const getAllPosts = asyncHandler(async (req, res, next) => {
-  const posts = await postModel.find().populate("user", "username avatar");
+  const posts = await postModel.find().populate("user", "username avatar").populate({
+    path: "comments",
+    populate: {
+      path: "user",
+      select: "username avatar"
+    }
+  }).populate({
+    path: "reactions",
+    populate: {
+      path: "user",
+      select: "username avatar"
+    }
+  });
 
   if (posts.length === 0) {
     return next(new AppError("No posts found", 404));
@@ -97,6 +109,13 @@ const getPost = asyncHandler(async (req, res, next) => {
           path: "user",
           select: "username avatar",
         },
+      })
+      .populate({
+        path: "reactions",
+        populate: {
+          path: "user",
+          select: "username avatar"
+        }
       })
       .populate("user", "username avatar");
 
