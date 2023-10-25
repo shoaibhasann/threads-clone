@@ -1,6 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import postModel from "../models/post.model.js";
 import reactionModel from "../models/reaction.model.js";
+import AppError from "../utils/error.util.js";
 
 /**
  *  @ADD_REACTION
