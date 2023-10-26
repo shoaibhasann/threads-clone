@@ -72,6 +72,11 @@ const userSchema = new Schema(
       ref: "User",
     }],
 
+    interests: {
+      type: [String],
+      default: []
+    },
+
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
   },

@@ -32,7 +32,7 @@ const getProfile = asyncHandler(async (req, res, next) => {
  */
 const editProfile = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
-  const { fullname, username, email } = req.body;
+  const { fullname, username, email, interests } = req.body;
 
   if (email) {
     return next(new AppError("Email change are not allowed", 400));
@@ -56,6 +56,10 @@ const editProfile = asyncHandler(async (req, res, next) => {
     }
 
     user.username = username;
+  }
+
+  if (interests) {
+    user.interests = interests;
   }
 
   if (req.file) {
@@ -100,7 +104,6 @@ const editProfile = asyncHandler(async (req, res, next) => {
  *  @ACESS (Public)
  */
 const followUser = asyncHandler(async (req, res, next) => {
-
   const { userId } = req.params; // User ID of the user to follow
 
   const { id } = req.user;
@@ -129,7 +132,7 @@ const followUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "You are now following the user",
+    message: `You'are now following ${userToFollow.username}`,
   });
 });
 
@@ -164,16 +167,15 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
 
   // Remove the current user from the followers's array of user to unfollow
   userToUnfollow.follower = userToUnfollow.follower.filter(
-    followerId => followerId.toString() !== currentUser._id.toString()
+    (followerId) => followerId.toString() !== currentUser._id.toString()
   );
   await userToUnfollow.save();
 
   res.status(200).json({
     success: true,
-    message: "You have unfollowed the user",
+    message: `You unfollow ${userToUnfollow.username}`,
   });
 });
-
 
 /**
  *  @GET_ALL_USER
@@ -186,8 +188,78 @@ const getUsers = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Users fetched successfully.",
-    users
+    users,
   });
-})
+});
 
-export { getProfile, editProfile, followUser, unfollowUser, getUsers };
+/**
+ *  @FRIEND_SUGGESTION
+ *  @ROUTE @GET {{URL} /api/v1/suggested-friends}
+ *  @ACESS (Public)
+ */
+const getSuggestedFriends = asyncHandler(async (req, res, next) => {
+  const { id } = req.user;
+
+  const currentUser = await userModel.findById(id);
+
+  const currentUserInterests = currentUser.interests;
+
+  const currentUserFollowing = currentUser.following;
+
+  // Find users who have common interests, excluding the current user
+  const suggestedFriends = await userModel.find({
+    _id: { $ne: id }, // Exclude the current user
+    _id: { $nin: currentUserFollowing }, // Exclude the current user following
+    interests: { $in: currentUserInterests },
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Friends suggested successfully",
+    suggestedFriends,
+  });
+});
+
+/**
+ *  @GET_UNFOLLOWED_FOLLOWERS
+ *  @ROUTE @GET {{URL} /api/v1/unfollowed-followers}
+ *  @ACESS (Public)
+ */
+
+const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
+  const { id } = req.user;
+
+  // Find current user's followers
+  const currentUser = await userModel.findById(id).populate("follower", "username avatar");
+
+  if (!currentUser) {
+    return next(new AppError("User not found", 404));
+  }
+
+  const followers = currentUser.follower;
+  const userNotFollowedBack = [];
+
+  for (const follower of followers) {
+    const isFollowedBack = currentUser.following.includes(follower._id);
+
+    if (!isFollowedBack) {
+      userNotFollowedBack.push(follower);
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "People you don't follow",
+    userNotFollowedBack,
+  });
+});
+
+export {
+  getProfile,
+  editProfile,
+  followUser,
+  unfollowUser,
+  getUsers,
+  getSuggestedFriends,
+  getUnfollowedFollowers,
+};
