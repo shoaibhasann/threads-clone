@@ -131,4 +131,27 @@ const removeComment = asyncHandler(async (req, res, next) => {
 });
 
 
-export { addComment, editComment, removeComment };
+/**
+ * @GET_ALL_COMMENTS
+ * @ROUTE @GET {{URL} /api/v1/comment/all}
+ * @ACCESS Admin
+ */
+const getAllComments = asyncHandler(async (req, res, next) => {
+
+  const comments = await commentModel.find();
+  const commentCount = await commentModel.countDocuments();
+
+  if (commentCount.length === 0) {
+    return next(new AppError("No comments found.", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Comments fetched successfully.",
+    comments,
+    commentCount
+  });
+});
+
+
+export { addComment, editComment, removeComment, getAllComments };

@@ -1,3 +1,4 @@
+import userModel from "../models/user.model.js";
 import AppError from "../utils/error.util.js";
 import asyncHandler from "./asyncHandler.middleware.js";
 import JWT from "jsonwebtoken";
@@ -19,6 +20,22 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
 
 });
 
+const authorizedRoles = (...roles) =>
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.user;
+
+    const acessUser = await userModel.findById(id);
+
+    if (!roles.includes(acessUser.role)) {
+      return next(
+        new AppError("You don't have permission to acess this route.", 403)
+      );
+    }
+
+    next();
+  });
+
 export { 
-    isLoggedIn
+    isLoggedIn,
+    authorizedRoles,
 }

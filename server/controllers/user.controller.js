@@ -174,4 +174,20 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { getProfile, editProfile, followUser, unfollowUser };
+
+/**
+ *  @GET_ALL_USER
+ *  @ROUTE @GET {{URL} /api/v1/admin}
+ *  @ACESS (Admin)
+ */
+const getUsers = asyncHandler(async (req, res, next) => {
+  const users = await userModel.find();
+
+  res.status(200).json({
+    success: true,
+    message: "Users fetched successfully.",
+    users
+  });
+})
+
+export { getProfile, editProfile, followUser, unfollowUser, getUsers };

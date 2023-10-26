@@ -65,7 +65,8 @@ const createPost = asyncHandler(async (req, res, next) => {
  * @ACCESS (Public)
  */
 const getAllPosts = asyncHandler(async (req, res, next) => {
-  const posts = await postModel.find().populate("user", "username avatar").populate({
+  const posts = await postModel.find()
+  .populate("user", "username avatar").populate({
     path: "comments",
     populate: {
       path: "user",

@@ -133,4 +133,28 @@ const getPostReactions = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { addReaction, removeReaction, getPostReactions };
+
+/**
+ * @GET_ALL_REACTIONS
+ * @ROUTE @GET {{URL} /api/v1/reaction/all}
+ * @ACCESS Admin
+ */
+const getAllReactions = asyncHandler(async (req, res, next) => {
+
+  const reactions = await reactionModel.find();
+  const reactionCount = await reactionModel.countDocuments();
+
+  if (reactionCount.length === 0) {
+    return next(new AppError("No reactions found.", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Reactions fetched successfully.",
+    reactions,
+    reactionCount
+  });
+});
+
+
+export { addReaction, removeReaction, getPostReactions, getAllReactions };
