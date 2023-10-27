@@ -94,8 +94,8 @@ const getPost = asyncHandler(async (req, res, next) => {
         path: "comments",
         populate: {
           path: "commentedBy",
-          select: "username avatar",
-        },
+          select: "username avatar"
+        }
       })
       .populate({
         path: "reactions",
@@ -233,6 +233,34 @@ const repostPost = asyncHandler(async (req, res, next) => {
 
 
 /**
+ *  @Fetch_REPOST
+ *  @ROUTE @GET {{URL} /api/v1/posts/fetch-repost}
+ *  @ACESS (Authenticated)
+ */
+const fetchRepost = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user;
+
+  const reposts = await userModel.findById(userId).populate({
+    path: "repost",
+    populate: {
+      path: "postedBy",
+      select: "username avatar"
+    }
+  });
+
+  if(!reposts){
+    return next(new AppError("You haven't reposted yet", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Reposts fetched successfully",
+    reposts: reposts.repost,
+  });
+});
+
+
+/**
  *  @FETCH_FOLLOWING_FEED
  *  @ROUTE @GET /api/v1/posts/feed
  *  @ACESS (Authenticated)
@@ -273,5 +301,6 @@ export {
   removePost,
   getAllPosts,
   repostPost,
+  fetchRepost,
   fetchFollowingFeed,
 };

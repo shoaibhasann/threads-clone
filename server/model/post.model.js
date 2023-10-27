@@ -61,6 +61,6 @@ const postSchema = new Schema(
   }
 );
 
-const postModel = model("POST", postSchema);
+const postModel = model("Post", postSchema);
 
 export default postModel;

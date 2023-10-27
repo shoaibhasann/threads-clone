@@ -185,20 +185,6 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- *  @GET_ALL_USER
- *  @ROUTE @GET {{URL} /api/v1/admin}
- *  @ACESS (Admin)
- */
-const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await userModel.find();
-
-  res.status(200).json({
-    success: true,
-    message: "Users fetched successfully.",
-    users,
-  });
-});
 
 /**
  *  @FRIEND_SUGGESTION
@@ -234,7 +220,6 @@ const getSuggestedFriends = asyncHandler(async (req, res, next) => {
  *  @ROUTE @GET {{URL} /api/v1/unfollowed-followers}
  *  @ACESS (Public)
  */
-
 const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
 
@@ -265,12 +250,28 @@ const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+/**
+ *  @GET_ALL_USER
+ *  @ROUTE @GET {{URL} /api/v1/admin}
+ *  @ACESS (Admin)
+ */
+const getUsers = asyncHandler(async (req, res, next) => {
+  const users = await userModel.find();
+
+  res.status(200).json({
+    success: true,
+    message: "Users fetched successfully.",
+    users,
+  });
+});
+
 export {
   getProfile,
   editProfile,
   followUser,
   unfollowUser,
-  getUsers,
   getSuggestedFriends,
   getUnfollowedFollowers,
+  getUsers,
 };
