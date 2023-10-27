@@ -1,7 +1,7 @@
-import postModel from "../models/post.model.js";
-import userModel from "../models/user.model.js";
-import asyncHandler from "../middlewares/asyncHandler.middleware.js";
-import AppError from "../utils/error.util.js";
+import postModel from "../model/post.model.js";
+import userModel from "../model/user.model.js";
+import asyncHandler from "../middleware/asyncHandler.middleware.js";
+import AppError from "../util/error.util.js";
 import fs from "fs/promises";
 import cloudinary from "cloudinary";
 
@@ -197,6 +197,42 @@ const removePost = asyncHandler(async (req, res, next) => {
 
 
 /**
+ *  @REPOST_POST
+ *  @ROUTE @GET {{URL} /api/v1/posts/repost/:id}
+ *  @ACESS (Authenticated)
+ */
+const repostPost = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user;
+
+  const { id } = req.params;
+
+  const user = await userModel.findById(userId);
+
+  const post = await postModel.findById(id);
+
+  if(!user || !post){
+    return next(new AppError("User or post not found", 404));
+  }
+
+  if(userId.toString() === post.postedBy.toString()){
+    return next(new AppError("You can't repost your post", 400));
+  }
+
+  user.repost.push(post);
+  await user.save();
+
+  post.numberOfRepost = post.numberOfRepost + 1;
+
+  await post.save();
+
+  res.status(201).json({
+    success: true,
+    message: "Post reposted successfully"
+  });
+});
+
+
+/**
  *  @FETCH_FOLLOWING_FEED
  *  @ROUTE @GET /api/v1/posts/feed
  *  @ACESS (Authenticated)
@@ -236,5 +272,6 @@ export {
   editPost,
   removePost,
   getAllPosts,
+  repostPost,
   fetchFollowingFeed,
 };

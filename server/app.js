@@ -1,10 +1,10 @@
 import express from "express";
-import authRoutes from "./routes/auth.route.js";
-import userRoutes from "./routes/user.route.js";
-import postRoutes from "./routes/post.route.js";
-import commentRoutes from "./routes/comment.route.js";
-import reactionRoutes from "./routes/reaction.route.js";
-import errorMiddleware from "./middlewares/error.middleware.js";
+import authRoutes from "./route/auth.route.js";
+import userRoutes from "./route/user.route.js";
+import postRoutes from "./route/post.route.js";
+import commentRoutes from "./route/comment.route.js";
+import reactionRoutes from "./route/reaction.route.js";
+import errorMiddleware from "./middleware/error.middleware.js";
 import cookieParser from "cookie-parser";
 
 // create an server instance of express

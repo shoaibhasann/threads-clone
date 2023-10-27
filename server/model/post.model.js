@@ -38,6 +38,12 @@ const postSchema = new Schema(
       required: true,
     },
 
+    numberOfRepost: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+
     numberOfComments: {
       type: Number,
       default: 0,

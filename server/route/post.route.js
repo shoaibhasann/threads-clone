@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { isLoggedIn } from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middleware/auth.middleware.js";
 import {
   createPost,
   editPost,
@@ -7,8 +7,8 @@ import {
   getAllPosts,
   getPost,
   removePost,
-} from "../controllers/post.controller.js";
-import upload from "../middlewares/multer.middleware.js";
+} from "../controller/post.controller.js";
+import upload from "../middleware/multer.middleware.js";
 
 const router = Router();
 

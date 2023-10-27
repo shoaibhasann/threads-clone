@@ -1,7 +1,7 @@
-import postModel from "../models/post.model.js";
-import commentModel from "../models/comment.model.js";
-import asyncHandler from "../middlewares/asyncHandler.middleware.js";
-import AppError from "../utils/error.util.js";
+import postModel from "../model/post.model.js";
+import commentModel from "../model/comment.model.js";
+import asyncHandler from "../middleware/asyncHandler.middleware.js";
+import AppError from "../util/error.util.js";
 
 /**
  *  @ADD_COMMENT

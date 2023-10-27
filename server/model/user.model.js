@@ -82,6 +82,11 @@ const userSchema = new Schema(
       maxLength: [50, "Bio should be less than 50 characters"]
     },
 
+    repost: [{
+      type: Schema.Types.ObjectId,
+      ref: "Post"
+    }],
+
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
   },

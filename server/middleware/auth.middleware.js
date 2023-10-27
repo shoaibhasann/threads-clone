@@ -1,5 +1,5 @@
-import userModel from "../models/user.model.js";
-import AppError from "../utils/error.util.js";
+import userModel from "../model/user.model.js";
+import AppError from "../util/error.util.js";
 import asyncHandler from "./asyncHandler.middleware.js";
 import JWT from "jsonwebtoken";
 

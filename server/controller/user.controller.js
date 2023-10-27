@@ -1,6 +1,6 @@
-import userModel from "../models/user.model.js";
-import asyncHandler from "../middlewares/asyncHandler.middleware.js";
-import AppError from "../utils/error.util.js";
+import userModel from "../model/user.model.js";
+import asyncHandler from "../middleware/asyncHandler.middleware.js";
+import AppError from "../util/error.util.js";
 import cloudinary from "cloudinary";
 import fs from "fs/promises";
 
