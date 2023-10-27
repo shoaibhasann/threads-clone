@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const commentSchema = new Schema({
     text: String,
-    user: {
+    commentedBy: {
         type: Schema.Types.ObjectId,
         ref: "User"
     },

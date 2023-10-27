@@ -2,14 +2,8 @@ import { Schema, model } from "mongoose";
 
 const postSchema = new Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      maxLength: 100,
-    },
 
-    description: {
+    content: {
       type: String,
       required: true,
       maxLength: 1000,
@@ -38,7 +32,7 @@ const postSchema = new Schema(
       },
     ],
 
-    user: {
+    postedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,

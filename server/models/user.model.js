@@ -77,6 +77,11 @@ const userSchema = new Schema(
       default: []
     },
 
+    bio: {
+      type: String,
+      maxLength: [50, "Bio should be less than 50 characters"]
+    },
+
     resetPasswordToken: String,
     resetPasswordExpiry: Date,
   },

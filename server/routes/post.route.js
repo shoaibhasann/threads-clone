@@ -3,7 +3,7 @@ import { isLoggedIn } from "../middlewares/auth.middleware.js";
 import {
   createPost,
   editPost,
-  fetchFeed,
+  fetchFollowingFeed,
   getAllPosts,
   getPost,
   removePost,
@@ -12,7 +12,7 @@ import upload from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.get("/feed", isLoggedIn, fetchFeed);
+router.get("/feed", isLoggedIn, fetchFollowingFeed);
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
 router.get("/", isLoggedIn, getAllPosts);
 router.get("/:id", isLoggedIn, getPost);

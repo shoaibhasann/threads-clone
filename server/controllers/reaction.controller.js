@@ -17,7 +17,7 @@ const addReaction = asyncHandler(async (req, res, next) => {
   const post = await postModel.findById(postId).populate({
     path: "reactions",
     populate: {
-      path: "user",
+      path: "reactedBy",
       select: "username",
     },
   });
@@ -28,7 +28,7 @@ const addReaction = asyncHandler(async (req, res, next) => {
 
   // Check if the user has already reacted to the post
   const existingReaction = post.reactions.find(
-    (reaction) => reaction.user._id.toString() === userId.toString()
+    (reaction) => reaction.reactedBy._id.toString() === userId.toString()
   );
 
   if (existingReaction) {
@@ -39,7 +39,7 @@ const addReaction = asyncHandler(async (req, res, next) => {
     // Create new reaction
     const newReaction = await reactionModel.create({
       reaction: reactionType,
-      user: userId,
+      reactedBy: userId,
     });
 
     post.reactions.push(newReaction);
@@ -70,7 +70,7 @@ const removeReaction = asyncHandler(async (req, res, next) => {
   const post = await postModel.findById(postId).populate({
     path: "reactions",
     populate: {
-        path: "user",
+        path: "reactedBy",
         select: "username"
     }
   });
@@ -80,7 +80,7 @@ const removeReaction = asyncHandler(async (req, res, next) => {
   }
 
   const existingReactionIndex = post.reactions.findIndex(
-    (reaction) => reaction.user._id.toString() === userId.toString()
+    (reaction) => reaction.reactedBy._id.toString() === userId.toString()
   );
 
   if (existingReactionIndex === -1) {
@@ -116,7 +116,7 @@ const getPostReactions = asyncHandler(async (req, res, next) => {
     .populate({
       path: "reactions",
       populate: {
-        path: "user",
+        path: "reactedBy",
         select: "username avatar",
       },
     })

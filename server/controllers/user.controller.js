@@ -108,6 +108,10 @@ const followUser = asyncHandler(async (req, res, next) => {
 
   const { id } = req.user;
 
+  if (id.toString() === userId.toString()) {
+    return next(new AppError("Soory, you can't follow ownself", 400));
+  }
+
   const currentUser = await userModel.findById(id);
 
   // Check if the user to follow exists
@@ -145,6 +149,10 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
   const { userId } = req.params; //User ID to unfollow
 
   const { id } = req.user;
+
+  if (id.toString() === userId.toString()) {
+    return next(new AppError("Soory, you can't follow ownself", 400));
+  }
 
   const currentUser = await userModel.findById(id);
 
@@ -206,10 +214,11 @@ const getSuggestedFriends = asyncHandler(async (req, res, next) => {
 
   const currentUserFollowing = currentUser.following;
 
+  const currentUserFollower = currentUser.follower;
+
   // Find users who have common interests, excluding the current user
   const suggestedFriends = await userModel.find({
-    _id: { $ne: id }, // Exclude the current user
-    _id: { $nin: currentUserFollowing }, // Exclude the current user following
+    _id: { $nin: [...currentUserFollowing, ...currentUserFollower, id] }, // Exclude the current user, their following & follower
     interests: { $in: currentUserInterests },
   });
 
@@ -230,7 +239,9 @@ const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
 
   // Find current user's followers
-  const currentUser = await userModel.findById(id).populate("follower", "username avatar");
+  const currentUser = await userModel
+    .findById(id)
+    .populate("follower", "username avatar");
 
   if (!currentUser) {
     return next(new AppError("User not found", 404));
@@ -249,7 +260,7 @@ const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: "People you don't follow",
+    message: "People you didn't follow back",
     userNotFollowedBack,
   });
 });

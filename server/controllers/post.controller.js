@@ -13,10 +13,10 @@ import cloudinary from "cloudinary";
  */
 const createPost = asyncHandler(async (req, res, next) => {
 
-  const { title, description } = req.body;
+  const { content } = req.body;
 
-  if (!title || !description) {
-    return next(new AppError("title & description are required", 400));
+  if (!content) {
+    return next(new AppError("Content is required", 400));
   }
 
   const thumbnail = {};
@@ -45,10 +45,9 @@ const createPost = asyncHandler(async (req, res, next) => {
   }
 
   const post = await postModel.create({
-    title,
-    description,
+    content,
     thumbnail,
-    user: req.user.id
+    postedBy: req.user.id
   });
 
   res.status(201).json({
@@ -65,20 +64,7 @@ const createPost = asyncHandler(async (req, res, next) => {
  * @ACCESS (Public)
  */
 const getAllPosts = asyncHandler(async (req, res, next) => {
-  const posts = await postModel.find()
-  .populate("user", "username avatar").populate({
-    path: "comments",
-    populate: {
-      path: "user",
-      select: "username avatar"
-    }
-  }).populate({
-    path: "reactions",
-    populate: {
-      path: "user",
-      select: "username avatar"
-    }
-  });
+  const posts = await postModel.find().populate("postedBy", "username avatar")
 
   if (posts.length === 0) {
     return next(new AppError("No posts found", 404));
@@ -107,18 +93,18 @@ const getPost = asyncHandler(async (req, res, next) => {
       .populate({
         path: "comments",
         populate: {
-          path: "user",
+          path: "commentedBy",
           select: "username avatar",
         },
       })
       .populate({
         path: "reactions",
         populate: {
-          path: "user",
+          path: "reactedBy",
           select: "username avatar"
         }
       })
-      .populate("user", "username avatar");
+      .populate("postedBy", "username avatar");
 
     if (!post) {
       return next(new AppError("Post not found", 404));
@@ -211,11 +197,11 @@ const removePost = asyncHandler(async (req, res, next) => {
 
 
 /**
- *  @FETCH_FEED
+ *  @FETCH_FOLLOWING_FEED
  *  @ROUTE @GET /api/v1/posts/feed
  *  @ACESS (Authenticated)
  */
-const fetchFeed = asyncHandler(async (req, res, next) => {
+const fetchFollowingFeed = asyncHandler(async (req, res, next) => {
    const { id } = req.user;
 
    const user = await userModel.findById(id);
@@ -230,7 +216,7 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
     return next(new AppError("You aren't following anyone.", 400));
    }
 
-   const posts = await postModel.find({ user: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("user", "username avatar");
+   const posts = await postModel.find({ user: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("postedBy", "username avatar");
 
    if(posts.length === 0){
     return next(new AppError("Feed post not found", 404));
@@ -250,5 +236,5 @@ export {
   editPost,
   removePost,
   getAllPosts,
-  fetchFeed
+  fetchFollowingFeed,
 };

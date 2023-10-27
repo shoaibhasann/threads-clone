@@ -21,7 +21,7 @@ const addComment = asyncHandler(async (req, res, next) => {
 
   // Create a new comment document
   const newComment = await commentModel.create({
-    user: req.user.id, // Reference to the user
+    commentedBy: req.user.id, // Reference to the user
     text: comment,
   });
 
@@ -64,7 +64,7 @@ const editComment = asyncHandler(async (req, res, next) => {
   }
 
   // Check if the user making the request is the owner of the comment
-  if (comment.user.toString() !== req.user.id) {
+  if (comment.commentedBy.toString() !== req.user.id) {
     return next(new AppError("Permission denied", 403));
   }
 
@@ -110,7 +110,7 @@ const removeComment = asyncHandler(async (req, res, next) => {
   }
 
   // Check if the comment exists and if the user making the request is the owner of the comment
-  if (comment.user && comment.user.toString() !== req.user.id) {
+  if (comment.commentedBy && comment.commentedBy.toString() !== req.user.id) {
     return next(new AppError("Permission denied", 403));
   }
 
