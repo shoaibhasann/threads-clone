@@ -126,7 +126,7 @@ const getPost = asyncHandler(async (req, res, next) => {
  */
 const editPost = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { content } = req.body;
 
   const post = await postModel.findById(id);
 
@@ -134,12 +134,8 @@ const editPost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  if (title) {
-    post.title = title;
-  }
-
-  if (description) {
-    post.description = description;
+  if (content) {
+    post.content = content;
   }
 
   if (req.file) {
@@ -177,9 +173,14 @@ const editPost = asyncHandler(async (req, res, next) => {
  *  @ACESS (Authenticated)
  */
 const removePost = asyncHandler(async (req, res, next) => {
+
   const { id } = req.params;
 
   const postExists = await postModel.findById(id);
+
+  const repostDocuments = await userModel.find({
+     repost: postExists._id
+  });
 
   if (!postExists) {
     return next(new AppError("Post not found", 404));
