@@ -59,11 +59,11 @@ const createPost = asyncHandler(async (req, res, next) => {
 
 
 /**
- * @GET_ALL_POST
+ * @GET_ALL_POSTS
  * @ROUTE @GET {{URL} /api/v1/posts/}
  * @ACCESS (Public)
  */
-const getAllPosts = asyncHandler(async (req, res, next) => {
+const fetchPosts = asyncHandler(async (req, res, next) => {
   const posts = await postModel.find().populate("postedBy", "username avatar")
 
   if (posts.length === 0) {
@@ -84,7 +84,7 @@ const getAllPosts = asyncHandler(async (req, res, next) => {
  *  @ROUTE @GET {{URL} /api/v1/posts/:id}
  *  @ACESS (Authenticated)
  */
-const getPost = asyncHandler(async (req, res, next) => {
+const fetchPostById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // Fetch post with comments info along the username and avatar and user which created post
@@ -263,7 +263,7 @@ const fetchRepost = asyncHandler(async (req, res, next) => {
 
 /**
  *  @FETCH_FOLLOWING_FEED
- *  @ROUTE @GET /api/v1/posts/feed
+ *  @ROUTE @GET /api/v1/posts/following-feed
  *  @ACESS (Authenticated)
  */
 const fetchFollowingFeed = asyncHandler(async (req, res, next) => {
@@ -281,27 +281,78 @@ const fetchFollowingFeed = asyncHandler(async (req, res, next) => {
     return next(new AppError("You aren't following anyone.", 400));
    }
 
-   const posts = await postModel.find({ user: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("postedBy", "username avatar");
+   const followingFeed = await postModel.find({ postedBy: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("postedBy", "username avatar");
 
-   if(posts.length === 0){
+   if(followingFeed.length === 0){
     return next(new AppError("Feed post not found", 404));
    }
 
    res.status(200).json({
     success: true,
     message: "Feed fetched successfully.",
-    posts
+    followingFeed
    });
 });
 
 
+/**
+ *  @FETCH_FEED
+ *  @ROUTE @GET /api/v1/posts/feed
+ *  @ACESS (Authenticated)
+ */
+const fetchFeed = asyncHandler(async(req, res, next) => {
+  const { id } = req.user;
+
+  const user = await userModel.findById(id);
+
+  if(!user){
+    return next(new AppError("User not found", 404));
+  }
+
+  const followingUsers = user.following;
+  const userInterests = user.interests;
+
+  let query = {
+    postedBy: { $nin: [...followingUsers, id]},
+  };
+
+  if (userInterests.length > 0) {
+    query.interests = { $in: userInterests };
+  }
+
+  const feed = await postModel.find(query).sort({ createdAt: -1}).populate("postedBy", "username avatar");
+
+  if(feed.length === 0){
+    return next(new AppError("Feed not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Feed fetched successfully",
+    feed
+  });
+});
+
+
+/**
+ *  @GET_ALL_POSTS_DATA
+ *  @ROUTE @GET /api/v1/posts/all-posts
+ *  @ACESS (Authenticated)
+ */
+const getAllPosts = asyncHandler(async (req, res, next) => {
+  const posts = await postModel.find()
+})
+
+
 export {
   createPost,
-  getPost,
+  fetchPosts,
+  fetchPostById,
   editPost,
   removePost,
-  getAllPosts,
   repostPost,
   fetchRepost,
   fetchFollowingFeed,
+  fetchFeed,
+  getAllPosts,
 };

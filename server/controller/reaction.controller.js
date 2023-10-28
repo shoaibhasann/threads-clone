@@ -156,5 +156,4 @@ const getAllReactions = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 export { addReaction, removeReaction, getPostReactions, getAllReactions };

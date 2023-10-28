@@ -11,7 +11,7 @@ import crypto from "crypto";
 
 // Setting cookie options
 const cookieOptions = {
-  maxAge: 7 * 60 * 60 * 1000, // Valid for 7 days
+  maxAge: 7 * 24 * 60 * 60 * 1000, // Valid for 7 days
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
   secure: process.env.NODE_ENV === "Development" ? "false" : "true",
