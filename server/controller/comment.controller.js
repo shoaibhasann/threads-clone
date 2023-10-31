@@ -153,5 +153,4 @@ const getAllComments = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 export { addComment, editComment, removeComment, getAllComments };
