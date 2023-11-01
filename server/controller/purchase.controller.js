@@ -1,4 +1,5 @@
 import asyncHandler from "../middleware/asyncHandler.middleware.js";
+import userModel from "../model/user.model.js"
 
 /**
  * @GET_API_KEY
@@ -18,8 +19,15 @@ const getRazorpayKey = asyncHandler(async (req, res, next) => {
  * @ROUTE @POST {{URL} /api/v1/purchase}
  * @ACCESS Authenticated
  */
-const buySubscription = asyncHandler(async (req, res, next) => {});
+const buySubscription = asyncHandler(async (req, res, next) => {
+    const { id: userId } = req.user;
 
+    const user = await userModel.findById(userId);
+
+    if(!user){
+        return next();
+    }
+});
 
 /**
  * @CANCEL_SUBSCRIPTION
