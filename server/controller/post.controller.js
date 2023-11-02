@@ -5,14 +5,12 @@ import AppError from "../util/error.util.js";
 import fs from "fs/promises";
 import cloudinary from "cloudinary";
 
-
 /**
  *  @CREATE_POST
  *  @ROUTE @POST {{URL} /api/v1/posts/}
  *  @ACESS (Authenticated)
  */
 const createPost = asyncHandler(async (req, res, next) => {
-
   const { content } = req.body;
 
   if (!content) {
@@ -22,15 +20,16 @@ const createPost = asyncHandler(async (req, res, next) => {
   const thumbnail = {};
 
   if (req.file) {
-
     try {
-      const isImage = req.file.mimetype.startsWith('image');
-      const setFolder = isImage ? "SpeakWave_Post_Images" : "SpeakWave_Posts_Videos";
-      const resourceType = isImage ? 'image' : 'video';
+      const isImage = req.file.mimetype.startsWith("image");
+      const setFolder = isImage
+        ? "SpeakWave_Post_Images"
+        : "SpeakWave_Posts_Videos";
+      const resourceType = isImage ? "image" : "video";
 
       const result = await cloudinary.v2.uploader.upload(req.file.path, {
         folder: setFolder,
-        resource_type: resourceType
+        resource_type: resourceType,
       });
 
       if (result) {
@@ -47,7 +46,7 @@ const createPost = asyncHandler(async (req, res, next) => {
   const post = await postModel.create({
     content,
     thumbnail,
-    postedBy: req.user.id
+    postedBy: req.user.id,
   });
 
   res.status(201).json({
@@ -57,14 +56,22 @@ const createPost = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 /**
  * @GET_ALL_POSTS
  * @ROUTE @GET {{URL} /api/v1/posts/}
  * @ACCESS (Public)
  */
 const fetchPosts = asyncHandler(async (req, res, next) => {
-  const posts = await postModel.find().populate("postedBy", "username avatar")
+  const posts = await postModel
+    .find()
+    .populate({
+      path: "comments",
+      populate: {
+        path: "commentedBy",
+        select: "username avatar",
+      },
+    })
+    .populate("postedBy", "username avatar");
 
   if (posts.length === 0) {
     return next(new AppError("No posts found", 404));
@@ -75,9 +82,7 @@ const fetchPosts = asyncHandler(async (req, res, next) => {
     message: "Posts fetched successfully.",
     posts,
   });
-
 });
-
 
 /**
  *  @GET_POST_BY_ID
@@ -88,36 +93,34 @@ const fetchPostById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // Fetch post with comments info along the username and avatar and user which created post
-    const post = await postModel
-      .findById(id)
-      .populate({
-        path: "comments",
-        populate: {
-          path: "commentedBy",
-          select: "username avatar"
-        }
-      })
-      .populate({
-        path: "reactions",
-        populate: {
-          path: "reactedBy",
-          select: "username avatar"
-        }
-      })
-      .populate("postedBy", "username avatar");
+  const post = await postModel
+    .findById(id)
+    .populate({
+      path: "comments",
+      populate: {
+        path: "commentedBy",
+        select: "username avatar",
+      },
+    })
+    .populate({
+      path: "reactions",
+      populate: {
+        path: "reactedBy",
+        select: "username avatar",
+      },
+    })
+    .populate("postedBy", "username avatar");
 
-    if (!post) {
-      return next(new AppError("Post not found", 404));
-    }
+  if (!post) {
+    return next(new AppError("Post not found", 404));
+  }
 
-    res.status(200).json({
-      success: true,
-      message: "Post fetched successfully",
-      post
-    });
- 
+  res.status(200).json({
+    success: true,
+    message: "Post fetched successfully",
+    post,
+  });
 });
-
 
 /**
  *  @EDIT_POST
@@ -173,13 +176,12 @@ const editPost = asyncHandler(async (req, res, next) => {
  *  @ACESS (Authenticated)
  */
 const removePost = asyncHandler(async (req, res, next) => {
-
   const { id } = req.params;
 
   const postExists = await postModel.findById(id);
 
   const repostDocuments = await userModel.find({
-     repost: postExists._id
+    repost: postExists._id,
   });
 
   if (!postExists) {
@@ -196,7 +198,6 @@ const removePost = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 /**
  *  @REPOST_POST
  *  @ROUTE @GET {{URL} /api/v1/posts/repost/:id}
@@ -211,11 +212,11 @@ const repostPost = asyncHandler(async (req, res, next) => {
 
   const post = await postModel.findById(id);
 
-  if(!user || !post){
+  if (!user || !post) {
     return next(new AppError("User or post not found", 404));
   }
 
-  if(userId.toString() === post.postedBy.toString()){
+  if (userId.toString() === post.postedBy.toString()) {
     return next(new AppError("You can't repost your post", 400));
   }
 
@@ -228,10 +229,9 @@ const repostPost = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: "Post reposted successfully"
+    message: "Post reposted successfully",
   });
 });
-
 
 /**
  *  @Fetch_REPOST
@@ -245,11 +245,11 @@ const fetchRepost = asyncHandler(async (req, res, next) => {
     path: "repost",
     populate: {
       path: "postedBy",
-      select: "username avatar"
-    }
+      select: "username avatar",
+    },
   });
 
-  if(!reposts){
+  if (!reposts) {
     return next(new AppError("You haven't reposted yet", 404));
   }
 
@@ -260,52 +260,53 @@ const fetchRepost = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 /**
  *  @FETCH_FOLLOWING_FEED
  *  @ROUTE @GET /api/v1/posts/following-feed
  *  @ACESS (Authenticated)
  */
 const fetchFollowingFeed = asyncHandler(async (req, res, next) => {
-   const { id } = req.user;
+  const { id } = req.user;
 
-   const user = await userModel.findById(id);
+  const user = await userModel.findById(id);
 
-   if(!user){
+  if (!user) {
     return next(new AppError("User not found", 404));
-   }
+  }
 
-   const followingUsers = user.following;
+  const followingUsers = user.following;
 
-   if(followingUsers.length === 0){
+  if (followingUsers.length === 0) {
     return next(new AppError("You aren't following anyone.", 400));
-   }
+  }
 
-   const followingFeed = await postModel.find({ postedBy: { $in: followingUsers}}).sort({ createdAt: -1 }).populate("postedBy", "username avatar");
+  const followingFeed = await postModel
+    .find({ postedBy: { $in: followingUsers } })
+    .sort({ createdAt: -1 })
+    .populate("postedBy", "username avatar");
 
-   if(followingFeed.length === 0){
+  if (followingFeed.length === 0) {
     return next(new AppError("Feed post not found", 404));
-   }
+  }
 
-   res.status(200).json({
+  res.status(200).json({
     success: true,
     message: "Feed fetched successfully.",
-    followingFeed
-   });
+    followingFeed,
+  });
 });
-
 
 /**
  *  @FETCH_FEED
  *  @ROUTE @GET /api/v1/posts/feed
  *  @ACESS (Authenticated)
  */
-const fetchFeed = asyncHandler(async(req, res, next) => {
+const fetchFeed = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
 
   const user = await userModel.findById(id);
 
-  if(!user){
+  if (!user) {
     return next(new AppError("User not found", 404));
   }
 
@@ -313,36 +314,28 @@ const fetchFeed = asyncHandler(async(req, res, next) => {
   const userInterests = user.interests;
 
   let query = {
-    postedBy: { $nin: [...followingUsers, id]},
+    postedBy: { $nin: [...followingUsers, id] },
   };
 
   if (userInterests.length > 0) {
     query.interests = { $in: userInterests };
   }
 
-  const feed = await postModel.find(query).sort({ createdAt: -1}).populate("postedBy", "username avatar");
+  const feed = await postModel
+    .find(query)
+    .sort({ createdAt: -1 })
+    .populate("postedBy", "username avatar");
 
-  if(feed.length === 0){
+  if (feed.length === 0) {
     return next(new AppError("Feed not found", 404));
   }
 
   res.status(200).json({
     success: true,
     message: "Feed fetched successfully",
-    feed
+    feed,
   });
 });
-
-
-/**
- *  @GET_ALL_POSTS_DATA
- *  @ROUTE @GET /api/v1/posts/all-posts
- *  @ACESS (Authenticated)
- */
-const getAllPosts = asyncHandler(async (req, res, next) => {
-  const posts = await postModel.find()
-})
-
 
 export {
   createPost,
@@ -354,5 +347,4 @@ export {
   fetchRepost,
   fetchFollowingFeed,
   fetchFeed,
-  getAllPosts,
 };

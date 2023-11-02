@@ -8,7 +8,6 @@ import {
   fetchPostById,
   fetchPosts,
   fetchRepost,
-  getAllPosts,
   removePost,
   repostPost,
 } from "../controller/post.controller.js";
@@ -22,7 +21,6 @@ router.get("/repost/:id", isLoggedIn, repostPost);
 router.get("/fetch-repost", isLoggedIn, fetchRepost);
 router.get("/", isLoggedIn, fetchPosts);
 router.get("/:id", isLoggedIn, fetchPostById);
-router.get("/admin", isLoggedIn, authorizedRoles("ADMIN"), getAllPosts);
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
 router.put("/:id", isLoggedIn, editPost);
 router.delete("/:id", isLoggedIn, removePost);
