@@ -234,7 +234,7 @@ const repostPost = asyncHandler(async (req, res, next) => {
 });
 
 /**
- *  @Fetch_REPOST
+ *  @FETCH_REPOST
  *  @ROUTE @GET {{URL} /api/v1/posts/fetch-repost}
  *  @ACESS (Authenticated)
  */
