@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setTheme } from "../../store/slices/ThemeSlice.js";
+import { setTheme } from "../store/slices/ThemeSlice.js";
 
 function MenuModal() {
 

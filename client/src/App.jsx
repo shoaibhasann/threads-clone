@@ -1,4 +1,4 @@
-import MainLayout from "./components/MainLayout"
+import MainLayout from "./layouts/MainLayout.jsx"
 
 
 function App() {
