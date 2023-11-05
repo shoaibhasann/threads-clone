@@ -4,7 +4,7 @@ import MenuModal from "../components/MenuModal.jsx";
 
 function MainLayout({ children }) {
   return (
-    <div className="h-[200vh] sm:max-w-[600px] mx-auto relative">
+    <div className="min-h-screen sm:max-w-[600px] mx-auto relative">
       <div className="fixed right-8 sm:right-28 top-8">
         <MenuModal />
       </div>

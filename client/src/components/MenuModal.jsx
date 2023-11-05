@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "../store/slices/ThemeSlice.js";
 
 function MenuModal() {
-
   const dispatch = useDispatch();
-  
+
+  // Accessing current theme
   const theme = useSelector((state) => state.theme.themeMode);
-  
+
   useEffect(() => {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       dispatch(setTheme("dark"));
@@ -16,7 +16,7 @@ function MenuModal() {
       dispatch(setTheme("light"));
     }
   }, []);
-  
+
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -24,24 +24,27 @@ function MenuModal() {
       document.documentElement.classList.remove("dark");
     }
   }, [theme]);
-  
+
   const toggelTheme = () => {
-    if(theme === "dark"){
+    if (theme === "dark") {
       dispatch(setTheme("light"));
-    } else{
+    } else {
       dispatch(setTheme("dark"));
     }
   };
-  
+
   const [isModalActive, setIsModalActive] = useState(false);
 
   const handleModal = () => {
     setIsModalActive((prev) => !prev);
   };
 
+  // Holding modal reference
   const modalRef = useRef(null);
 
   useEffect(() => {
+    
+    // function to check if user click outside modal then modal will become inactive
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsModalActive(false);
@@ -54,6 +57,7 @@ function MenuModal() {
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
+    // Clean up function
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

@@ -1,9 +1,13 @@
-import MainLayout from "./layouts/MainLayout.jsx"
+import { Route,Routes } from "react-router-dom";
+
+import Home from "./pages/Home.jsx";
 
 
 function App() {
   return (
-    <MainLayout/>
+    <Routes>
+      <Route path='/' element={<Home/>} />
+    </Routes>
   )
 }
 
