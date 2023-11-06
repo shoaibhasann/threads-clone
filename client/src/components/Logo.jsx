@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
+import { useTheme } from "../hooks/useTheme.js";
 
 function Logo() {
-  const { themeMode } = useSelector((state) => state?.theme);
+  const themeMode = useTheme();
 
   return (
     <div style={{ 

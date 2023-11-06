@@ -1,21 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
+import { useTheme } from "../hooks/useTheme.js"
 import { setTheme } from "../store/slices/ThemeSlice.js";
 
 function MenuModal() {
   const dispatch = useDispatch();
 
   // Accessing current theme
-  const theme = useSelector((state) => state.theme.themeMode);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      dispatch(setTheme("dark"));
-    } else {
-      dispatch(setTheme("light"));
-    }
-  }, []);
+  const theme = useTheme();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -28,8 +22,29 @@ function MenuModal() {
   const toggelTheme = () => {
     if (theme === "dark") {
       dispatch(setTheme("light"));
+      toast("Hello Lightness!", {
+        duration: 1000,
+        icon: "🌞",
+        style: {
+          border: "1px solid #333",
+          borderRadius: "10px",
+          background: "#fff",
+          color: "#000",
+        },
+      });
+
     } else {
       dispatch(setTheme("dark"));
+      toast("Hello Darkness!", {
+        duration: 1000,
+        icon: "🌛",
+        style: {
+          border: "1px solid #4d4d4d",
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
     }
   };
 
