@@ -15,6 +15,7 @@ const initialState = {
     : {},
 };
 
+
 // thunk function to create new account
 export const createAccount = createAsyncThunk(
   "/auth/signup",
@@ -41,7 +42,7 @@ export const login = createAsyncThunk(
   "/auth/login",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.post("/auth/login", data);
+      const res = axiosInstance.post("/auth/login", data);
       toast.promise(res, {
         loading: "Logging in...",
         success: (response) => {
@@ -51,6 +52,7 @@ export const login = createAsyncThunk(
       });
       return (await res).data;
     } catch (error) {
+      console.log(error?.response?.data?.message);
       return rejectWithValue(error?.response?.data?.message);
     }
   }
@@ -62,7 +64,6 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-
       .addCase(createAccount.fulfilled, (state, action) => {
         localStorage.setItem("data", JSON.stringify(action?.payload?.user));
         localStorage.setItem("isLoggedIn", true);
@@ -74,7 +75,6 @@ const authSlice = createSlice({
         state.data = action?.payload?.user;
         state.role = action?.payload?.user?.role;
       })
-
       .addCase(login.fulfilled, (state, action) => {
         localStorage.setItem("data", JSON.stringify(action?.payload?.user));
         localStorage.setItem("isLoggedIn", true);
