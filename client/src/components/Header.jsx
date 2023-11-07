@@ -1,8 +1,10 @@
 import { FiEdit } from "react-icons/fi";
 import { GoHeart, GoHome, GoPerson, GoSearch } from "react-icons/go";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 const Header = () => {
+  const username = useSelector((state) => state?.auth?.data?.username);
   return (
     <div
       style={{ WebkitTapHighlightColor: "transparent" }}
@@ -50,7 +52,7 @@ const Header = () => {
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
-          to="/:username"
+          to={`/@${username}`}
           className={({ isActive }) =>
             isActive ? "dark:text-white" : "text-dark-text"
           }
