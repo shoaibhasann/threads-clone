@@ -8,7 +8,7 @@ function UserHeader() {
   const userData = useSelector((state) => state?.auth?.data);
 
   return (
-    <div className="pt-10 sm:mt-6">
+    <div className="pt-10 sm:pt-0 sm:mt-6">
 
       <div className="flex justify-between items-center">
         <div>
