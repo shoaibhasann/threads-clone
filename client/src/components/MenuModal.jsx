@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { useTheme } from "../hooks/useTheme.js"
+import { logout } from "../store/slices/AuthSlice.js";
 import { setTheme } from "../store/slices/ThemeSlice.js";
 
 function MenuModal() {
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Accessing current theme
   const theme = useTheme();
@@ -26,10 +30,10 @@ function MenuModal() {
         duration: 1000,
         icon: "🌞",
         style: {
-          border: "1px solid #333",
+          border: "1px solid #4d4d4d",
           borderRadius: "10px",
-          background: "#fff",
-          color: "#000",
+          background: "#333",
+          color: "#fff",
         },
       });
 
@@ -39,10 +43,10 @@ function MenuModal() {
         duration: 1000,
         icon: "🌛",
         style: {
-          border: "1px solid #4d4d4d",
+          border: "1px solid #333",
           borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
+          background: "#fff",
+          color: "#000",
         },
       });
     }
@@ -77,6 +81,14 @@ function MenuModal() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isModalActive]);
+
+  const handleLogout = async () => {
+    const response = await dispatch(logout());
+
+    if(response?.payload?.success){
+      navigate("/login");
+    }
+  }
 
   return (
     <div className="min-w-36" ref={modalRef}>
@@ -123,7 +135,7 @@ function MenuModal() {
           <li className="border-b border-dark-text py-3 cursor-pointer px-6">
             Report a problem
           </li>
-          <li className="py-3 cursor-pointer px-6">Log out</li>
+          <li onClick={handleLogout} className="py-3 cursor-pointer px-6">Log out</li>
         </ul>
       </div>
     </div>
