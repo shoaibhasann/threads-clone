@@ -1,8 +1,11 @@
+
 import Header from "../components/Header.jsx";
 import Logo from "../components/Logo.jsx";
 import MenuModal from "../components/MenuModal.jsx";
 
 function MainLayout({ children }) {
+
+
   return (
     <div className="min-h-screen sm:max-w-[600px] mx-auto relative">
       <div className="sticky top-0 left-0 sm:hidden">

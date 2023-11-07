@@ -1,46 +1,51 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { BiHide, BiShowAlt } from 'react-icons/bi'
+import { BiHide, BiShowAlt } from "react-icons/bi";
 import { TailSpin } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
-import { login } from "../store/slices/AuthSlice.js";
-function Login() {
+import { createAccount } from "../store/slices/AuthSlice.js";
+
+function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { loading: isLoading } = useSelector((state) => state?.auth);
 
-  const [loginData, setLoginData] = useState({
+  const [signupData, setSignupData] = useState({
+    fullname: "",
     username: "",
     password: "",
+    email: ""
   });
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleUserInput = (e) => {
     const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
+    setSignupData({
+      ...signupData,
       [name]: value,
     });
   };
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
-    if (!loginData.username || !loginData.password) {
+    if (!signupData.username || !signupData.password || !signupData.email || !signupData.fullname) {
       toast.error("Please fill all the details.");
     }
 
-    const response = await dispatch(login(loginData));
+    const response = await dispatch(createAccount(signupData));
 
     if (response?.payload?.success) {
       navigate("/");
     }
 
-    setLoginData({
+    setSignupData({
+      fullname: "",
+      username: "",
       email: "",
       password: "",
     });
@@ -50,10 +55,31 @@ function Login() {
     <div className="flex overflow-x-auto items-center justify-center h-[100vh] bg-dark-secondary">
       <form
         noValidate
-        onSubmit={handleLogin}
+        onSubmit={handleSignup}
         className="flex flex-col justify-center gap-3 p-6 mx-4 sm:mx-0 text-white w-96 shadow-[0_0_10px_#4d4d4d] rounded-lg"
       >
-        <h1 className="text-center text-2xl font-bold">Log In</h1>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <img className="w-10" src="./favicon.png" alt="Threads" />
+          <h1 className="text-center text-2xl font-bold">
+            Create your account
+          </h1>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="fullname" className="font-semibold">
+            Fullname <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            name="fullname"
+            id="fullname"
+            placeholder="Enter your fullname.."
+            className="bg-transparent px-2 py-1 sm:py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none"
+            onChange={handleUserInput}
+            value={signupData.fullname}
+          />
+        </div>
 
         <div className="flex flex-col gap-1">
           <label htmlFor="username" className="font-semibold">
@@ -67,7 +93,23 @@ function Login() {
             placeholder="Enter your username.."
             className="bg-transparent px-2 py-1 sm:py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none"
             onChange={handleUserInput}
-            value={loginData.username}
+            value={signupData.username}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email" className="font-semibold">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            required
+            name="email"
+            id="email"
+            placeholder="Enter your email.."
+            className="bg-transparent px-2 py-1 sm:py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none"
+            onChange={handleUserInput}
+            value={signupData.email}
           />
         </div>
 
@@ -84,7 +126,7 @@ function Login() {
               placeholder="Enter your password.."
               className="bg-transparent w-full px-2 py-1 sm:py-2 border rounded-md focus:ring focus:ring-blue-300 outline-none pr-10"
               onChange={handleUserInput}
-              value={loginData.password}
+              value={signupData.password}
             />
             <button
               type="button"
@@ -94,12 +136,6 @@ function Login() {
               {showPassword ? <BiHide /> : <BiShowAlt />}
             </button>
           </div>
-        </div>
-
-        <div className="text-right">
-          <a href="/forgot-password" className="text-xs text-accent underline">
-            Forgot Password?
-          </a>
         </div>
 
         <button
@@ -118,14 +154,14 @@ function Login() {
               visible={true}
             />
           ) : (
-            "Log In"
+            "Sign Up"
           )}
         </button>
 
         <p className="flex items-center justify-center gap-2">
-          Don&apos;t have an account?
-          <Link to="/signup" className="text-accent cursor-pointer underline">
-            Sign Up
+          Already have an account?
+          <Link to="/login" className="text-accent cursor-pointer underline">
+            Log In
           </Link>
         </p>
       </form>
@@ -133,4 +169,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

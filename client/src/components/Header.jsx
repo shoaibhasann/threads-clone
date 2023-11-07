@@ -3,7 +3,7 @@ import { GoHeart, GoHome, GoPerson, GoSearch } from "react-icons/go";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
-const Header = () => {
+function Header (){
   const username = useSelector((state) => state?.auth?.data?.username);
   return (
     <div
@@ -62,6 +62,6 @@ const Header = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Header;
