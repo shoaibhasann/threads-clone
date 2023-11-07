@@ -5,12 +5,12 @@ import UserHeader from "../components/user/UserHeader";
 import MainLayout from "../layouts/MainLayout";
 
 function Profile() {
-    const { username, fullname } = useSelector((state) => state?.auth?.data);
+    const userData = useSelector((state) => state?.auth?.data);
 
   return (
     <>
       <MetaData
-        title={`${fullname} (@${username}) on Threads`}
+        title={`${userData.fullname} (@${userData.username}) on Threads`}
       />
       <MainLayout>
         <UserHeader />
