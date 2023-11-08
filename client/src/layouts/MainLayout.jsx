@@ -20,7 +20,7 @@ function MainLayout({ children }) {
       <div className="opacity-0 sm:opacity-100 sm:fixed sm:left-28 sm:top-7">
         <Logo />
       </div>
-      <div className="fixed bottom-0 left-0 right-0 text-center sm:sticky sm:top-0">
+      <div className="fixed bottom-0 left-0 right-0 text-center sm:sticky sm:top-0 z-50 transition duration-300">
         <Header />
       </div>
       {children}

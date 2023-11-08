@@ -1,19 +1,18 @@
 
 
-import { useSelector } from "react-redux";
-
 import MetaData from "../components/MetaData";
 import UserHeader from "../components/user/UserHeader";
+import { useAuth } from "../hooks/useAuth";
 import MainLayout from "../layouts/MainLayout";
 
 function Profile() {
 
-    const userData = useSelector((state) => state?.auth?.data);
+    const { data: { fullname, username }} = useAuth();
 
   return (
     <>
       <MetaData
-        title={`${userData.fullname} (@${userData.username}) on Threads`}
+        title={`${fullname} (@${username}) on Threads`}
       />
       <MainLayout>
         <UserHeader/>

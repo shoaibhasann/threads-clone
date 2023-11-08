@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast"
 import { BsImages } from "react-icons/bs"
+import { GoXCircleFill } from  "react-icons/go"
 
 import { useAuth } from "../../hooks/useAuth";
 import MainLayout from "../../layouts/MainLayout";
@@ -16,7 +18,7 @@ function ThreadForm() {
     const avatarHeight = 16 * 11;
     const remainingHeight = parentHeight - avatarHeight;
     setLineHeight(remainingHeight);
-  }, []);
+  }, [parentRef]);
 
   // Accessing user's data
   const {
@@ -24,14 +26,37 @@ function ThreadForm() {
   } = useAuth();
 
   const [content, setContent] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
+  const [thumbnail, setThumbnail] = useState(undefined);
 
   const inputChange = (text) => {
     setContent(text);
   }
 
-    useEffect(() => {
-      console.log(content); // Log the updated content in a useEffect
-    }, [content]);
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+
+    if(file){
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+
+      reader.addEventListener("load", () => {
+        setPreviewImage(reader.result);
+        setThumbnail(file);
+      })
+    }
+    
+  }
+
+  // Posting new thread
+  const postThread = (e) => {
+    e.preventDefault();
+
+    if(!content && !thumbnail){
+      toast.error("Please drop some content")
+    }
+  } 
 
   return (
     <MainLayout>
@@ -70,23 +95,38 @@ function ThreadForm() {
             </div>
           </div>
         </div>
-        <div className="relative">
+        <form onSubmit={postThread}>
           <div>
             <h2 className="font-medium tracking-normal dark:text-white">
               {username}
             </h2>
           </div>
           <AutoExpandingTextarea onChangeText={inputChange} />
-          <BsImages className="mt-1 text-gray-400 text-xl" />
-          <div
-            className="absolute bottom-2 right-2"
-            style={{ userSelect: "none" }}
-          >
-            <button className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 text-end">
+          <label htmlFor="thumbnail">
+            <BsImages className="mt-1 text-gray-400 text-xl cursor-pointer" />
+          </label>
+          <input
+            id="thumbnail"
+            type="file"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+          {previewImage && (
+            <div className="mt-4 h-56 relative">
+              <img
+                className="w-full h-full object-cover"
+                src={previewImage}
+                alt="Preview-Image"
+              />
+              <GoXCircleFill onClick={() => setPreviewImage(undefined)} className="mt-1 text-gray-200 dark:text-white text-xl sm:text-2xl cursor-pointer absolute top-3 right-3" />
+            </div>
+          )}
+          <div className="flex justify-end mt-4" style={{ userSelect: "none" }}>
+            <button type="submit" className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 font-medium">
               Post
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </MainLayout>
   );

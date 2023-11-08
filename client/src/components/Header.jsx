@@ -8,7 +8,7 @@ function Header (){
   return (
     <div
       style={{ WebkitTapHighlightColor: "transparent" }}
-      className="flex items-center justify-around pb-4 sm:py-3"
+      className="flex items-center justify-around pb-4 sm:py-3 dark:bg-dark-background"
     >
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
