@@ -7,23 +7,19 @@ function MainLayout({ children }) {
 
 
   return (
-    <div className="min-h-screen sm:max-w-[600px] mx-auto relative">
-      <div className="sticky top-0 left-0 sm:hidden">
-        <div className="flex items-center justify-between py-4 px-4">
-          <Logo />
-          <MenuModal />
-        </div>
+    <div className="min-h-screen sm:max-w-[600px] mx-auto">
+      <div className="fixed top-7 left-7">
+        <Logo/>
       </div>
-      <div className="opacity-0 sm:opacity-100 sm:fixed sm:right-28 sm:top-8">
-        <MenuModal />
+      <div className="fixed top-7 right-7 z-50">
+        <MenuModal/>
       </div>
-      <div className="opacity-0 sm:opacity-100 sm:fixed sm:left-28 sm:top-7">
-        <Logo />
+      <div className="fixed bottom-0 left-0 right-0 sm:sticky sm:top-0 sm:left-0">
+        <Header/>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 text-center sm:sticky sm:top-0 z-50 transition duration-300">
-        <Header />
+      <div className="pt-20 sm:pt-0">
+        {children}
       </div>
-      {children}
     </div>
   );
 }

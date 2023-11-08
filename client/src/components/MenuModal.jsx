@@ -3,16 +3,13 @@ import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { useTheme } from "../hooks/useTheme.js"
+import { useTheme } from "../hooks/useTheme.js";
 import { logout } from "../store/slices/AuthSlice.js";
 import { setTheme } from "../store/slices/ThemeSlice.js";
 
 function MenuModal() {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  // Accessing current theme
   const theme = useTheme();
 
   useEffect(() => {
@@ -23,7 +20,7 @@ function MenuModal() {
     }
   }, [theme]);
 
-  const toggelTheme = () => {
+  const toggleTheme = () => {
     if (theme === "dark") {
       dispatch(setTheme("light"));
       toast("Hello Lightness!", {
@@ -36,7 +33,6 @@ function MenuModal() {
           color: "#fff",
         },
       });
-
     } else {
       dispatch(setTheme("dark"));
       toast("Hello Darkness!", {
@@ -53,17 +49,13 @@ function MenuModal() {
   };
 
   const [isModalActive, setIsModalActive] = useState(false);
-
   const handleModal = () => {
     setIsModalActive((prev) => !prev);
   };
 
-  // Holding modal reference
   const modalRef = useRef(null);
 
   useEffect(() => {
-    
-    // function to check if user click outside modal then modal will become inactive
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         setIsModalActive(false);
@@ -76,7 +68,6 @@ function MenuModal() {
       document.removeEventListener("mousedown", handleClickOutside);
     }
 
-    // Clean up function
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -84,21 +75,15 @@ function MenuModal() {
 
   const handleLogout = async () => {
     const response = await dispatch(logout());
-
-    if(response?.payload?.success){
+    if (response?.payload?.success) {
       navigate("/login");
     }
-  }
+  };
 
   return (
     <div className="min-w-36" ref={modalRef}>
       <div className="flex justify-end items-center mb-2">
         <div
-          style={{
-            userSelect: "none",
-            WebkitTapHighlightColor: "transparent",
-            outline: "none",
-          }}
           className="text-2xl cursor-pointer flex flex-col justify-end items-end group"
           onClick={handleModal}
         >
@@ -114,17 +99,17 @@ function MenuModal() {
           ></div>
         </div>
       </div>
-      <div className={!isModalActive ? "hidden" : "block"}>
-        <ul
-          style={{
-            userSelect: "none",
-            WebkitTapHighlightColor: "transparent",
-            outline: "none",
-          }}
-          className="bg-light-background dark:bg-dark-secondary text-black dark:text-white text-base font-medium shadow-xl rounded-lg"
-        >
+      <div
+        className="transition-opacity"
+        style={{
+          opacity: isModalActive ? 1 : 0,
+          transform: isModalActive ? "translateX(0)" : "translateX(100%)",
+          pointerEvents: isModalActive ? "auto" : "none",
+        }}
+      >
+        <ul className="bg-light-background dark:bg-dark-secondary text-black dark:text-white text-base font-medium shadow-xl rounded-lg">
           <li
-            onClick={toggelTheme}
+            onClick={toggleTheme}
             className="border-b border-dark-text py-3 cursor-pointer px-6"
           >
             Switch appearance
@@ -135,7 +120,9 @@ function MenuModal() {
           <li className="border-b border-dark-text py-3 cursor-pointer px-6">
             Report a problem
           </li>
-          <li onClick={handleLogout} className="py-3 cursor-pointer px-6">Log out</li>
+          <li onClick={handleLogout} className="py-3 cursor-pointer px-6">
+            Log out
+          </li>
         </ul>
       </div>
     </div>

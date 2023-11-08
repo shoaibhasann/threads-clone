@@ -25,11 +25,11 @@ export const createThread = createAsyncThunk(
         {
           duration: 1000,
           style: {
-            borderRadius: "10px",
+            borderRadius: "4px",
             background: "#000" ,
             color: "#fff",
-            fontSize: "20px",
-            padding: "10px 25px"
+            fontSize: "16px",
+            padding: "10px 30px"
           },
         }
       );

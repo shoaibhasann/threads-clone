@@ -10,7 +10,7 @@ function Logo() {
        }}>
       <img
         className="w-8 cursor-pointer hover:scale-110 transition-transform"
-        src={themeMode === "dark" ? "/light-logo.svg" : "dark-logo.svg"}
+        src={themeMode === "dark" ? "/light-logo.svg" : "/dark-logo.svg"}
         alt="logo"
       />
     </div>
