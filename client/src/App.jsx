@@ -10,17 +10,17 @@ import Signup from "./pages/Signup.jsx";
 
 
 function App() {
+
   return (
     <Routes>
       <Route exact path="/signup" element={<Signup />} />
       <Route exact path="/login" element={<Login />} />
-      <Route element={<RequireAuth/>}>
+      <Route element={<RequireAuth />}>
         <Route path="/" element={<Home />} />
-        <Route path="/:username" element={<Profile/>}/>
-        <Route path="/new-thread" element={<ThreadForm/>} />
-        
+        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/new-thread" element={<ThreadForm />} />
       </Route>
-      <Route path="*" element={<NotFound/>}/>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

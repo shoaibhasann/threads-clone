@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast"
 import { BsImages } from "react-icons/bs"
-import { GoXCircleFill } from  "react-icons/go"
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import MainLayout from "../../layouts/MainLayout";
+import { createThread } from "../../store/slices/ThreadSlice";
 import AutoExpandingTextarea from "./TextArea";
 
 function ThreadForm() {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Holding Reference of parent div 
   const parentRef = useRef(null);
@@ -50,12 +55,23 @@ function ThreadForm() {
   }
 
   // Posting new thread
-  const postThread = (e) => {
+  const postThread = async (e) => {
     e.preventDefault();
 
     if(!content && !thumbnail){
       toast.error("Please drop some content")
     }
+
+    const thread = new FormData();
+
+    thread.append("content", content);
+    thread.append("thumbnail", thumbnail);
+
+   const resposne = await dispatch(createThread(thread));
+
+   if(resposne?.payload?.success){
+    navigate("/@username");
+   }
   } 
 
   return (
@@ -67,7 +83,7 @@ function ThreadForm() {
         ref={parentRef}
         className="grid grid-cols-[1fr_6fr] gap-2 mx-1 p-3 py-4 sm:p-6 bg-white dark:bg-dark-secondary border border-dark-text max-w-[600px] sm:mx-auto rounded-xl min-h-[40vh]"
       >
-        <div>
+        <div className="thread_line_container">
           <div className="flex flex-col items-center gap-4">
             {/* First Avatar */}
             <div className="flex-shrink-0">
@@ -118,11 +134,11 @@ function ThreadForm() {
                 src={previewImage}
                 alt="Preview-Image"
               />
-              <GoXCircleFill onClick={() => setPreviewImage(undefined)} className="mt-1 text-gray-200 dark:text-white text-xl sm:text-2xl cursor-pointer absolute top-3 right-3" />
+              <img src="./cancel.png" alt="cancel" onClick={() => setPreviewImage(undefined)} className="mt-1 w-5 cursor-pointer absolute top-0.5 right-1" />
             </div>
           )}
           <div className="flex justify-end mt-4" style={{ userSelect: "none" }}>
-            <button type="submit" className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 font-medium">
+            <button disabled={!content ? true : false} type="submit" className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 font-medium">
               Post
             </button>
           </div>

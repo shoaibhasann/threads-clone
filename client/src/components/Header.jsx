@@ -52,7 +52,7 @@ function Header (){
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
-          to={`/@${username}`}
+          to={`/profile/${username}`}
           className={({ isActive }) =>
             isActive ? "dark:text-white" : "text-dark-text"
           }
