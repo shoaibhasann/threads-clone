@@ -70,7 +70,7 @@ function ThreadForm() {
    const resposne = await dispatch(createThread(thread));
 
    if(resposne?.payload?.success){
-    navigate("/@username");
+    navigate("/profile");
    }
   } 
 

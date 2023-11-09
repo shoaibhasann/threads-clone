@@ -4,7 +4,6 @@ import {
   editProfile,
   followUser,
   getProfile,
-  getSuggestedFriends,
   getUnfollowedFollowers,
   getUsers,
   unfollowUser,
@@ -18,7 +17,6 @@ router.put("/edit-profile", isLoggedIn, upload.single("avatar"), editProfile);
 router.get("/users/:userId/follow", isLoggedIn, followUser);
 router.get("/users/:userId/unfollow", isLoggedIn, unfollowUser);
 router.get("/admin", isLoggedIn, authorizedRoles("ADMIN"), getUsers);
-router.get("/suggested-friends", isLoggedIn, getSuggestedFriends);
 router.get("/unfollowed-followers", isLoggedIn, getUnfollowedFollowers);
 
 export default router;

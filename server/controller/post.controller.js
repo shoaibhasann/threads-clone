@@ -311,20 +311,19 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
   }
 
   const followingUsers = user.following;
-  const userInterests = user.interests;
-
-  let query = {
-    postedBy: { $nin: [...followingUsers, id] },
-  };
-
-  if (userInterests.length > 0) {
-    query.interests = { $in: userInterests };
-  }
 
   const feed = await postModel
-    .find(query)
+    .find({
+      postedBy: { $nin: [...followingUsers, id]},
+    })
     .sort({ createdAt: -1 })
-    .populate("postedBy", "username avatar");
+    .populate("postedBy", "username avatar").populate({
+      path: "comments", 
+      populate: {
+        path: "commentedBy",
+        select: "username avatar"
+      }
+    })
 
   if (feed.length === 0) {
     return next(new AppError("Feed not found", 404));

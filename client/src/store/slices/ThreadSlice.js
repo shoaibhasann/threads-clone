@@ -3,6 +3,15 @@ import { toast } from "react-hot-toast";
 
 import axiosInstance from "../../helpers/AxiosInstance";
 
+// Thunk function to get user feed
+export const getFeed = createAsyncThunk("/thread/feed", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/posts/feed");
+    return res.data; 
+  } catch (error) {
+    return rejectWithValue(error?.response?.data?.message);
+  }
+});
 
 // Thunk function to create new thread
 export const createThread = createAsyncThunk(
@@ -26,10 +35,10 @@ export const createThread = createAsyncThunk(
           duration: 1000,
           style: {
             borderRadius: "4px",
-            background: "#000" ,
+            background: "#000",
             color: "#fff",
             fontSize: "16px",
-            padding: "10px 30px"
+            padding: "10px 30px",
           },
         }
       );
@@ -44,10 +53,33 @@ export const createThread = createAsyncThunk(
 const threadSlice = createSlice({
   name: "thread",
   initialState: {
-    threads: [],
+    feed: [],
+    followingFeed: [],
+    loading: false,
+    error: null
   },
-  reducers: {},
-  extraReducers: {},
+  reducers: {
+    clearErrors: (state) => {
+      state.error = null;
+    }
+  },
+  extraReducers: (builder) => {
+
+    builder
+     .addCase(getFeed.pending, (state) => {
+        state.loading = true;
+     })
+     .addCase(getFeed.fulfilled, (state, action) => {
+      state.loading = false;
+      state.feed = action.payload.feed;
+     })
+     .addCase(getFeed.rejected, (state, action ) => {
+      state.loading = false;
+      state.error = action.payload;
+     })
+  },
 });
+
+export const { clearErrors } = threadSlice.actions;
 
 export default threadSlice.reducer;

@@ -192,35 +192,6 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
 
 
 /**
- *  @FRIEND_SUGGESTION
- *  @ROUTE @GET {{URL} /api/v1/suggested-friends}
- *  @ACESS (Public)
- */
-const getSuggestedFriends = asyncHandler(async (req, res, next) => {
-  const { id } = req.user;
-
-  const currentUser = await userModel.findById(id);
-
-  const currentUserInterests = currentUser.interests;
-
-  const currentUserFollowing = currentUser.following;
-
-  const currentUserFollower = currentUser.follower;
-
-  // Find users who have common interests, excluding the current user
-  const suggestedFriends = await userModel.find({
-    _id: { $nin: [...currentUserFollowing, ...currentUserFollower, id] }, // Exclude the current user, their following & follower
-    interests: { $in: currentUserInterests },
-  });
-
-  res.status(200).json({
-    success: true,
-    message: "Friends suggested successfully",
-    suggestedFriends,
-  });
-});
-
-/**
  *  @GET_UNFOLLOWED_FOLLOWERS
  *  @ROUTE @GET {{URL} /api/v1/unfollowed-followers}
  *  @ACESS (Public)
@@ -276,7 +247,6 @@ export {
   editProfile,
   followUser,
   unfollowUser,
-  getSuggestedFriends,
   getUnfollowedFollowers,
   getUsers,
 };

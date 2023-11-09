@@ -7,7 +7,7 @@ function MainLayout({ children }) {
 
 
   return (
-    <div className="h-[200vh] sm:max-w-[600px] mx-auto">
+    <div className="min-h-screen sm:max-w-[600px] mx-auto">
       <div className="fixed top-7 left-7">
         <Logo/>
       </div>
