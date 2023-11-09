@@ -1,14 +1,15 @@
 import { FiEdit } from "react-icons/fi";
-import { GoHeart, GoHome, GoPerson, GoSearch } from "react-icons/go";
-import { useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { GoHeart, GoHeartFill, GoHome, GoHomeFill, GoPerson, GoPersonFill, GoSearch } from "react-icons/go";
+import { NavLink, useLocation } from "react-router-dom";
 
 function Header (){
-  const username = useSelector((state) => state?.auth?.data?.username);
+
+  const location = useLocation();
+
   return (
     <div
       style={{ WebkitTapHighlightColor: "transparent" }}
-      className="flex items-center justify-around pb-4 sm:py-3 dark:bg-dark-background"
+      className="flex items-center justify-around pb-4 sm:py-3 bg-light-background dark:bg-dark-background sm:bg-opacity-30 sm:backdrop-blur-xl"
     >
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
@@ -17,7 +18,11 @@ function Header (){
             isActive ? "dark:text-white" : "text-dark-text"
           }
         >
-          <GoHome className="text-3xl" />
+          {location.pathname === "/" ? (
+            <GoHomeFill className="text-3xl" />
+          ) : (
+            <GoHome className="text-3xl" />
+          )}
         </NavLink>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
@@ -47,17 +52,25 @@ function Header (){
             isActive ? "dark:text-white" : "text-dark-text"
           }
         >
-          <GoHeart className="text-3xl" />
+          {location.pathname === "/activity" ? (
+            <GoHeartFill className="text-3xl" />
+          ) : (
+            <GoHeart className="text-3xl" />
+          )}
         </NavLink>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
-          to={`/profile/${username}`}
+          to="/profile"
           className={({ isActive }) =>
             isActive ? "dark:text-white" : "text-dark-text"
           }
         >
-          <GoPerson className="text-3xl" />
+          {location.pathname === "/profile" ? (
+            <GoPersonFill className="text-3xl" />
+          ) : (
+            <GoPerson className="text-3xl" />
+          )}
         </NavLink>
       </div>
     </div>

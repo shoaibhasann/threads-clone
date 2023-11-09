@@ -17,7 +17,7 @@ function App() {
       <Route exact path="/login" element={<Login />} />
       <Route element={<RequireAuth />}>
         <Route path="/" element={<Home />} />
-        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/new-thread" element={<ThreadForm />} />
       </Route>
       <Route path="*" element={<NotFound />} />
