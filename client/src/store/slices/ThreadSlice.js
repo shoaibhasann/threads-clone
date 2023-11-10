@@ -4,14 +4,17 @@ import { toast } from "react-hot-toast";
 import axiosInstance from "../../helpers/AxiosInstance";
 
 // Thunk function to get user feed
-export const getFeed = createAsyncThunk("/thread/feed", async (_, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get("/posts/feed");
-    return res.data; 
-  } catch (error) {
-    return rejectWithValue(error?.response?.data?.message);
+export const getFeed = createAsyncThunk(
+  "/thread/feed",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/posts/feed");
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data?.message);
+    }
   }
-});
+);
 
 // Thunk function to create new thread
 export const createThread = createAsyncThunk(
@@ -50,36 +53,49 @@ export const createThread = createAsyncThunk(
   }
 );
 
+const initialState = {
+  feed: localStorage.getItem("feed")
+    ? JSON.parse(localStorage.getItem("feed"))
+    : [],
+  followingFeed: localStorage.getItem("followingFeed")
+    ? JSON.parse(localStorage.getItem("followingFeed"))
+    : [],
+  loading: false,
+  error: null,
+};
+
 const threadSlice = createSlice({
   name: "thread",
-  initialState: {
-    feed: [],
-    followingFeed: [],
-    loading: false,
-    error: null
-  },
+  initialState,
   reducers: {
+    clearThreadSlice: (state) => {
+      state.feed = [];
+      state.followingFeed = [];
+      state.loading = false;
+      state.error = null;
+    },
+
     clearErrors: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
-
     builder
-     .addCase(getFeed.pending, (state) => {
+      .addCase(getFeed.pending, (state) => {
         state.loading = true;
-     })
-     .addCase(getFeed.fulfilled, (state, action) => {
-      state.loading = false;
-      state.feed = action.payload.feed;
-     })
-     .addCase(getFeed.rejected, (state, action ) => {
-      state.loading = false;
-      state.error = action.payload;
-     })
+      })
+      .addCase(getFeed.fulfilled, (state, action) => {
+        localStorage.setItem("feed", JSON.stringify(action.payload.feed));
+        state.loading = false;
+        state.feed = action.payload.feed;
+      })
+      .addCase(getFeed.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { clearErrors } = threadSlice.actions;
+export const { clearErrors, clearThreadSlice } = threadSlice.actions;
 
 export default threadSlice.reducer;

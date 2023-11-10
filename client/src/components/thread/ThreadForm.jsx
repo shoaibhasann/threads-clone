@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast"
 import { BsImages } from "react-icons/bs"
 import { useDispatch } from "react-redux";
@@ -18,7 +18,7 @@ function ThreadForm() {
   const parentRef = useRef(null);
   const [lineHeight, setLineHeight] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const parentHeight = parentRef.current.clientHeight;
     const avatarHeight = 16 * 11;
     const remainingHeight = parentHeight - avatarHeight;
@@ -138,7 +138,7 @@ function ThreadForm() {
             </div>
           )}
           <div className="flex justify-end mt-4" style={{ userSelect: "none" }}>
-            <button disabled={!content ? true : false} type="submit" className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 font-medium">
+            <button disabled={!content && !thumbnail ? true : false} type="submit" className="bg-black dark:bg-white text-white dark:text-black rounded-3xl px-4 py-2 font-medium">
               Post
             </button>
           </div>

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme.js";
 import { logout } from "../store/slices/AuthSlice.js";
 import { setTheme } from "../store/slices/ThemeSlice.js";
+import { clearThreadSlice } from "../store/slices/ThreadSlice.js";
 
 function MenuModal() {
   const dispatch = useDispatch();
@@ -76,6 +77,7 @@ function MenuModal() {
   const handleLogout = async () => {
     const response = await dispatch(logout());
     if (response?.payload?.success) {
+      dispatch(clearThreadSlice());
       navigate("/login");
     }
   };
