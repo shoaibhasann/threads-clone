@@ -13,8 +13,8 @@ import cloudinary from "cloudinary";
 const createPost = asyncHandler(async (req, res, next) => {
   const { content } = req.body;
 
-  if (!content) {
-    return next(new AppError("Content is required", 400));
+  if(!content && !req.file){
+    return next(new AppError("Please add something before posting", 400));
   }
 
   const thumbnail = {};
@@ -324,6 +324,13 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
         select: "username avatar"
       }
     })
+    .populate({
+      path: "reactions",
+      populate: {
+        path: "reactedBy",
+        select: "username avatar"
+      }
+    });
 
   if (feed.length === 0) {
     return next(new AppError("Feed not found", 404));
