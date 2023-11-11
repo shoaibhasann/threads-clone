@@ -216,8 +216,8 @@ const repostPost = asyncHandler(async (req, res, next) => {
     return next(new AppError("User or post not found", 404));
   }
 
-  if (userId.toString() === post.postedBy.toString()) {
-    return next(new AppError("You can't repost your post", 400));
+  if(user.repost.includes(id)){
+    return next(new AppError("You can't repost the thread more than one time.", 400));
   }
 
   user.repost.push(post);

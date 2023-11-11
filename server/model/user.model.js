@@ -72,11 +72,6 @@ const userSchema = new Schema(
       ref: "User",
     }],
 
-    interests: {
-      type: [String],
-      default: []
-    },
-
     bio: {
       type: String,
       maxLength: [50, "Bio should be less than 50 characters"]

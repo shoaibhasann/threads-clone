@@ -4,14 +4,13 @@ import reactionModel from "../model/reaction.model.js";
 import AppError from "../util/error.util.js";
 
 /**
- *  @ADD_REACTION
- *  @ROUTE @POST {{URL} /api/v1/reaction/:postId}
+ *  @TOGGLE_REACTION
+ *  @ROUTE @PUT {{URL} /api/v1/reaction/:postId}
  *  @ACESS (Authenticated)
  */
-const addReaction = asyncHandler(async (req, res, next) => {
+const toggleReaction = asyncHandler(async (req, res, next) => {
   const { postId } = req.params;
   const { id: userId } = req.user;
-  const { reactionType } = req.body;
 
   // Find the post and populate its reactions with user details
   const post = await postModel.findById(postId).populate({
@@ -27,18 +26,24 @@ const addReaction = asyncHandler(async (req, res, next) => {
   }
 
   // Check if the user has already reacted to the post
-  const existingReaction = post.reactions.find(
+  const existingReactionIndex = post.reactions.findIndex(
     (reaction) => reaction.reactedBy._id.toString() === userId.toString()
   );
 
-  if (existingReaction) {
-    await reactionModel.findByIdAndUpdate(existingReaction._id, {
-      reaction: reactionType,
-    });
+  if (existingReactionIndex !== -1) {
+    // Remove existing user reaction from reaction model
+    await reactionModel.findByIdAndDelete(post.reactions[existingReactionIndex]._id);
+
+    // Remove reaction from post 
+    post.reactions.splice(existingReactionIndex, 1);
+
+    post.numberOfReactions = post.reactions.length;
+
+    await post.save();
   } else {
     // Create new reaction
     const newReaction = await reactionModel.create({
-      reaction: reactionType,
+      reaction: true,
       reactedBy: userId,
     });
 
@@ -51,57 +56,10 @@ const addReaction = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: "Reaction added successfully",
-    data: {
-      reactionType: reactionType,
-    },
+    message: "Reaction toggled successfully",
   });
 });
 
-/**
- * @REMOVE_REACTION
- * @ROUTE @DELETE {{URL} /api/v1/reaction/:postId}
- * @ACCESS Authenticated
- */
-const removeReaction = asyncHandler(async (req, res, next) => {
-  const { postId } = req.params;
-  const { id: userId } = req.user;
-
-  const post = await postModel.findById(postId).populate({
-    path: "reactions",
-    populate: {
-        path: "reactedBy",
-        select: "username"
-    }
-  });
-
-  if (!post) {
-    return next(new AppError("Post not found", 404));
-  }
-
-  const existingReactionIndex = post.reactions.findIndex(
-    (reaction) => reaction.reactedBy._id.toString() === userId.toString()
-  );
-
-  if (existingReactionIndex === -1) {
-    return next(new AppError("Reaction not found for this post", 400));
-  }
-
-  const removedReactionId = post.reactions[existingReactionIndex]._id;
-
-  post.reactions.splice(existingReactionIndex, 1);
-
-  post.numberOfReactions = post.reactions.length;
-
-  await post.save();
-
-  await reactionModel.findByIdAndDelete(removedReactionId);
-
-  res.status(200).json({
-    success: true,
-    message: "Reaction removed successfully",
-  });
-});
 
 /**
  * @GET_POST_REACTIONS
@@ -156,4 +114,4 @@ const getAllReactions = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { addReaction, removeReaction, getPostReactions, getAllReactions };
+export { toggleReaction, getPostReactions, getAllReactions };

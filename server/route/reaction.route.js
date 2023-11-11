@@ -1,9 +1,8 @@
 import { Router } from "express";
 import {
-  addReaction,
+  toggleReaction,
   getAllReactions,
   getPostReactions,
-  removeReaction,
 } from "../controller/reaction.controller.js";
 import { authorizedRoles, isLoggedIn } from "../middleware/auth.middleware.js";
 
@@ -14,7 +13,7 @@ router.route("/all").get(isLoggedIn, authorizedRoles("ADMIN"), getAllReactions);
 router
   .route("/:postId")
   .get(isLoggedIn, getPostReactions)
-  .post(isLoggedIn, addReaction)
-  .delete(isLoggedIn, removeReaction);
+  .put(isLoggedIn, toggleReaction)
+
 
 export default router;
