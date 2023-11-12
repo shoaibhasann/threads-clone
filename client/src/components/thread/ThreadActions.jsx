@@ -12,7 +12,7 @@ import {
 } from "../../store/slices/ThreadSlice.js";
 import CommentModal from "./CommentModal.jsx";
 
-function Actions({ post }) {
+function ThreadActions({ post }) {
   const dispatch = useDispatch();
   const {
     data: { _id: userId },
@@ -145,7 +145,7 @@ function Actions({ post }) {
   );
 }
 
-export default Actions;
+export default ThreadActions;
 
 // Component for repost the thread
 const RepostSVG = ({ theme, postId }) => {

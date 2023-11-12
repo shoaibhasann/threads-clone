@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 
 import verifiedTick from "../../assets/verified.png";
-import Actions from "./ThreadActions";
+import ThreadActions from "./ThreadActions";
 
 TimeAgo.addLocale(en);
 
@@ -102,7 +102,7 @@ function Thread({ isVerified, post }) {
           </Link>
         )}
 
-        <Actions post={post} />
+        <ThreadActions post={post} />
 
         <div className="h-6 text-gray-500 flex items-center justify-start gap-2">
           {post.replies.length > 0 && (
