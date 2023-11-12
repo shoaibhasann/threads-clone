@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 import { login } from "../store/slices/AuthSlice.js";
-import { getFeed } from "../store/slices/ThreadSlice.js";
+
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,7 +38,6 @@ function Login() {
     const response = await dispatch(login(loginData));
 
     if (response?.payload?.success) {
-      dispatch(getFeed());
       navigate("/");
     }
 

@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 
 import verifiedTick from "../../assets/verified.png";
-import Actions from "./Actions";
+import Actions from "./ThreadActions";
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(en);
 
 function Thread({ isVerified, post }) {
   const parentRef = useRef(null);
@@ -17,7 +17,7 @@ function Thread({ isVerified, post }) {
   useLayoutEffect(() => {
     const calculateLineHeight = () => {
       const parentHeight = parentRef.current.clientHeight;
-      const avatarHeight = 135; // Assuming this is the height of the avatar
+      const avatarHeight = 159; // Assuming this is the height of the avatar
       const remainingHeight = parentHeight - avatarHeight;
       setLineHeight(remainingHeight);
     };
@@ -30,7 +30,10 @@ function Thread({ isVerified, post }) {
   }, [parentRef]);
 
   return (
-    <div ref={parentRef} className="grid grid-cols-[1fr_6fr] gap-2 mx-1 p-3 py-4 sm:p-6 bg-transparent border-b border-dark-text sm:mx-auto">
+    <div
+      ref={parentRef}
+      className="grid grid-cols-[1fr_6fr] gap-2 mx-1 p-3 py-4 sm:p-6 bg-transparent border-b border-dark-text sm:mx-auto"
+    >
       <div className="thread_line_container">
         <div className="flex flex-col items-center gap-4">
           {/* First Avatar */}
@@ -51,11 +54,11 @@ function Thread({ isVerified, post }) {
           ></div>
           {/* Second Avatar */}
           <div className="flex-shrink-0">
-            {post.comments && post.comments.length > 0 ? (
+            {post.replies && post.replies.length > 0 ? (
               <img
-                src={post.comments[1].commentedBy.avatar.secure_url}
+                src={post?.replies[0]?.userAvatar}
                 alt="Avatar"
-                className="w-8 h-8 rounded-full opacity-50"
+                className="w-5 h-5 rounded-full"
               />
             ) : (
               "🥱"
@@ -66,32 +69,60 @@ function Thread({ isVerified, post }) {
       <div>
         <div className="flex items-center justify-between">
           <div className="flex gap-1 items-center mb-2">
+            {/* Display username  */}
             <h1 className="font-medium tracking-normal dark:text-white">
               {post.postedBy.username}
             </h1>
+            {/* Blue tick  */}
             {isVerified ? (
               <img className="w-4" src={verifiedTick} alt="verified-tick" />
             ) : null}
           </div>
+          {/* Thread posted time  */}
           <div className="text-dark-text font-medium">
             <ReactTimeAgo
-              date={new Date(post?.createdAt).getTime()}
+              date={new Date(post.createdAt).getTime()}
               locale="en-US"
               timeStyle="twitter"
             />
           </div>
         </div>
+
+        {/* Thread content */}
         {post.content && <p className="dark:text-white mb-2">{post.content}</p>}
 
-        <Link to={`/post/${post._id}`}>
-          <img
-            className="rounded-lg border border-dark-text max-h-[400px] mb-2"
-            src={post.thumbnail.secure_url}
-            alt="thumbnail"
-          />
-        </Link>
+        {/* Thread thumbnail */}
+        {post.thumbnail && (
+          <Link to={`/post/${post._id}`}>
+            <img
+              className="rounded-lg border border-dark-text max-h-[400px] mb-2"
+              src={post.thumbnail.secure_url}
+              alt="thumbnail"
+            />
+          </Link>
+        )}
 
         <Actions post={post} />
+
+        <div className="h-6 text-gray-500 flex items-center justify-start gap-2">
+          {post.replies.length > 0 && (
+            <Link
+              to={`/post/${post._id}`}
+              className="cursor-pointer hover:underline"
+            >
+              {post.replies.length}{" "}
+              {post.replies.length === 1 ? "reply" : "replies"}
+            </Link>
+          )}
+
+          {post.replies.length > 0 && post.likes.length > 0 && <span>.</span>}
+
+          {post.likes.length > 0 && (
+            <Link to={`/post/${post._id}`} className="cursor-pointer hover:underline">
+              {post.likes.length} {"like" + (post.likes.length > 1 ? "s" : "")}
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

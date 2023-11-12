@@ -29,7 +29,7 @@ function MenuModal() {
         icon: "🌞",
         style: {
           border: "1px solid #4d4d4d",
-          borderRadius: "10px",
+          borderRadius: "7px",
           background: "#333",
           color: "#fff",
         },
@@ -41,7 +41,7 @@ function MenuModal() {
         icon: "🌛",
         style: {
           border: "1px solid #333",
-          borderRadius: "10px",
+          borderRadius: "7px",
           background: "#fff",
           color: "#000",
         },
@@ -83,7 +83,7 @@ function MenuModal() {
   };
 
   return (
-    <div className="min-w-36" ref={modalRef}>
+    <div className="min-w-36" ref={modalRef} style={{userSelect: "none"}}>
       <div className="flex justify-end items-center mb-2">
         <div
           className="text-2xl cursor-pointer flex flex-col justify-end items-end group"

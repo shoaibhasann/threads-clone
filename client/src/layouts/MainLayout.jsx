@@ -11,7 +11,7 @@ function MainLayout({ children }) {
       <div className="fixed top-7 left-7">
         <Logo />
       </div>
-      <div className="fixed top-7 right-7 z-50">
+      <div className="fixed top-8 right-7 z-50">
         <MenuModal />
       </div>
       <div className="fixed bottom-0 left-0 right-0 sm:sticky sm:top-0 sm:left-0">

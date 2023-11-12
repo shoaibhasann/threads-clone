@@ -3,6 +3,61 @@ import { toast } from "react-hot-toast";
 
 import axiosInstance from "../../helpers/AxiosInstance";
 
+//Thunk function to drop reply or comment on thread
+export const dropComment = createAsyncThunk("/thread/drop-comment", async (data) => {
+  try {
+    const res = axiosInstance.post(`/posts/reply/${data.postId}`, { comment: data.comment });
+
+    toast.promise(
+      res,
+      {
+        loading: "Replying...",
+        success: "Replied",
+        error: "Replying failed",
+      },
+      {
+        duration: 1000,
+        style: {
+          borderRadius: "4px",
+          background: "#000",
+          color: "#fff",
+          fontSize: "16px",
+          padding: "10px 30px",
+        },
+      }
+    );
+    return (await res).data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+})
+// Thunk function to drop like on thread
+export const likeUnlikeThread = createAsyncThunk(
+  "/thread/like-unlike",
+  async (postId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.put(`/posts/like-unlike/${postId}`);
+
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data?.message);
+    }
+  }
+);
+
+// Thunk function to repost the thread
+export const repostThread = createAsyncThunk(
+  "/thread/repost",
+  async (postId) => {
+    try {
+      const res = await axiosInstance.get(`/posts/repost/${postId}`);
+      return res.data;
+    } catch (error) {
+      toast.error(error?.resposne?.data?.message);
+    }
+  }
+);
+
 // Thunk function to get user feed
 export const getFeed = createAsyncThunk(
   "/thread/feed",
@@ -68,6 +123,10 @@ const threadSlice = createSlice({
   name: "thread",
   initialState,
   reducers: {
+    setFeed: (state, action) => {
+      state.feed = action.payload;
+    },
+
     clearThreadSlice: (state) => {
       state.feed = [];
       state.followingFeed = [];
@@ -96,6 +155,6 @@ const threadSlice = createSlice({
   },
 });
 
-export const { clearErrors, clearThreadSlice } = threadSlice.actions;
-
+export const { clearErrors, clearThreadSlice, setFeed } =
+  threadSlice.actions;
 export default threadSlice.reducer;
