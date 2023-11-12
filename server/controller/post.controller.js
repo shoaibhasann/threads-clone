@@ -4,6 +4,7 @@ import asyncHandler from "../middleware/asyncHandler.middleware.js";
 import AppError from "../util/error.util.js";
 import fs from "fs/promises";
 import cloudinary from "cloudinary";
+import mongoose from "mongoose";
 
 /**
  *  @CREATE_POST
@@ -302,6 +303,7 @@ const fetchFollowingFeed = asyncHandler(async (req, res, next) => {
  *  @ACESS (Authenticated)
  */
 const fetchFeed = asyncHandler(async (req, res, next) => {
+
   const { id } = req.user;
 
   const user = await userModel.findById(id);
@@ -317,20 +319,7 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
       postedBy: { $nin: [...followingUsers, id]},
     })
     .sort({ createdAt: -1 })
-    .populate("postedBy", "username avatar").populate({
-      path: "comments", 
-      populate: {
-        path: "commentedBy",
-        select: "username avatar"
-      }
-    })
-    .populate({
-      path: "reactions",
-      populate: {
-        path: "reactedBy",
-        select: "username avatar"
-      }
-    });
+    .populate("postedBy", "username avatar")
 
   if (feed.length === 0) {
     return next(new AppError("Feed not found", 404));
@@ -343,6 +332,88 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ *  @TOGGLE_LIKE
+ *  @ROUTE @PUT {{URL} /api/v1/posts/like-unlike/:postId}
+ *  @ACESS (Authenticated)
+ */
+const toggleLikeUnlike = asyncHandler(async (req, res, next) => {
+  const { postId } = req.params;
+  const { id: userId } = req.user;
+
+  // Find the post and populate its reactions with user details
+  const post = await postModel.findById(postId);
+
+  if (!post) {
+    return next(new AppError("Post not found", 404));
+  }
+
+  // Check if the user has already liked the post
+  const existingLikeIndex = post.likes.findIndex(
+    (like) => like.toString() === userId.toString()
+  );
+
+  try {
+    if (existingLikeIndex !== -1) {
+      // Remove like from post
+      post.likes.splice(existingLikeIndex, 1);
+    } else {
+      // Add like to post
+      post.likes.push(userId);
+    }
+
+    await post.save(); // Save once after toggling
+
+    res.status(201).json({
+      success: true,
+      message: "Reaction toggled successfully",
+    });
+  } catch (error) {
+    return next(new AppError("Error saving post", 500));
+  }
+});
+
+
+/**
+ *  @ADD_COMMENT
+ *  @ROUTE @POST {{URL} /api/v1/posts/reply/:postId}
+ *  @ACESS (Authenticated)
+ */
+const addComment = asyncHandler(async (req, res, next) => {
+  const { id } = req.user;
+  const { postId } = req.params;
+  const { comment } = req.body;
+
+  const user = await userModel.findById(id);
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+  const post = await postModel.findById(postId);
+
+  if(!post){
+    return next(new AppError("Post not found", 404));
+  }
+
+  // Create new reply or comment 
+  const newReply = {
+    userId: id,
+    text: comment,
+    userAvatar: user.avatar.secure_url,
+    username: user.username
+  }
+
+  post.replies.push(newReply);
+
+  await post.save();
+
+  res.status(201).json({
+    success: true,
+    message: "Replied successfully"
+  });
+
+});
 export {
   createPost,
   fetchPosts,
@@ -353,4 +424,6 @@ export {
   fetchRepost,
   fetchFollowingFeed,
   fetchFeed,
+  toggleLikeUnlike,
+  addComment
 };

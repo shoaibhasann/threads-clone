@@ -17,17 +17,28 @@ const postSchema = new Schema(
       },
     },
 
-    reactions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Reaction",
-      },
-    ],
+    likes: {
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default : []
+    },
 
-    comments: [
+    replies: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true
+        },
+        text: {
+          type: String
+        },
+        userAvatar: {
+          type: String
+        },
+        username: {
+          type: String
+        }
       },
     ],
 
@@ -43,17 +54,6 @@ const postSchema = new Schema(
       min: 0
     },
 
-    numberOfComments: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-
-    numberOfReactions: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
   },
   {
     timestamps: true,

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authorizedRoles, isLoggedIn } from "../middleware/auth.middleware.js";
 import {
+  addComment,
   createPost,
   editPost,
   fetchFeed,
@@ -10,6 +11,7 @@ import {
   fetchRepost,
   removePost,
   repostPost,
+  toggleLikeUnlike
 } from "../controller/post.controller.js";
 import upload from "../middleware/multer.middleware.js";
 
@@ -22,7 +24,9 @@ router.get("/fetch-repost", isLoggedIn, fetchRepost);
 router.get("/", isLoggedIn, fetchPosts);
 router.get("/:id", isLoggedIn, fetchPostById);
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
+router.post("/reply/:postId", isLoggedIn, addComment);
 router.put("/:id", isLoggedIn, editPost);
+router.put("/like-unlike/:postId", isLoggedIn, toggleLikeUnlike);
 router.delete("/:id", isLoggedIn, removePost);
 
 
