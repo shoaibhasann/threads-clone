@@ -96,20 +96,6 @@ const fetchPostById = asyncHandler(async (req, res, next) => {
   // Fetch post with comments info along the username and avatar and user which created post
   const post = await postModel
     .findById(id)
-    .populate({
-      path: "comments",
-      populate: {
-        path: "commentedBy",
-        select: "username avatar",
-      },
-    })
-    .populate({
-      path: "reactions",
-      populate: {
-        path: "reactedBy",
-        select: "username avatar",
-      },
-    })
     .populate("postedBy", "username avatar");
 
   if (!post) {
@@ -401,7 +387,8 @@ const addComment = asyncHandler(async (req, res, next) => {
     userId: id,
     text: comment,
     userAvatar: user.avatar.secure_url,
-    username: user.username
+    username: user.username,
+    repliedAt: Date.now()
   }
 
   post.replies.push(newReply);
@@ -410,7 +397,8 @@ const addComment = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: "Replied successfully"
+    message: "Replied successfully",
+    newReply
   });
 
 });

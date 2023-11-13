@@ -3,7 +3,8 @@ import { toast } from "react-hot-toast";
 
 import axiosInstance from "../../helpers/AxiosInstance";
 
-//Thunk function to drop reply or comment on thread
+
+// Thunk function to drop reply or comment on thread
 export const dropComment = createAsyncThunk("/thread/drop-comment", async (data) => {
   try {
     const res = axiosInstance.post(`/posts/reply/${data.postId}`, { comment: data.comment });
@@ -112,9 +113,6 @@ const initialState = {
   feed: localStorage.getItem("feed")
     ? JSON.parse(localStorage.getItem("feed"))
     : [],
-  followingFeed: localStorage.getItem("followingFeed")
-    ? JSON.parse(localStorage.getItem("followingFeed"))
-    : [],
   loading: false,
   error: null,
 };
@@ -151,7 +149,7 @@ const threadSlice = createSlice({
       .addCase(getFeed.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
   },
 });
 

@@ -8,6 +8,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
 import Signup from "./pages/Signup.jsx";
+// import ThreadDetail from "./pages/ThreadDetail.jsx";
 
 
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/new-thread" element={<ThreadForm />} />
+        {/* <Route path="/thread/:id" element={<ThreadDetail />} /> */}
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

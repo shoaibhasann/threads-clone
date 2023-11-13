@@ -25,32 +25,39 @@ function ThreadActions({ post }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to handle like & unlike flow
-  const handleLikeAndUnlike = async () => {
-    if (isLiking) return;
-    setIsLiking(true);
+const handleLikeAndUnlike = async () => {
+  if (isLiking) return;
+  setIsLiking(true);
 
-    try {
-      await dispatch(likeUnlikeThread(post._id));
-      setLiked(!liked);
+  try {
+    const response = await dispatch(likeUnlikeThread(post._id));
 
-      const updatedPosts = posts.map((p) => {
-        if (p._id === post._id) {
-          return {
-            ...p,
-            likes: liked
-              ? p.likes.filter((like) => like !== userId)
-              : [...p.likes, userId],
-          };
-        }
-      });
+    if(response?.payload?.success){
+      
+          const updatedPosts = posts.map((p) => {
+            if (p._id === post._id) {
+              return {
+                ...p,
+                likes: liked
+                  ? p.likes.filter((like) => like !== userId)
+                  : [...p.likes, userId],
+              };
+            }
+            return p;
+          });
 
-      setFeed(updatedPosts);
-    } catch (error) {
-      toast.error(error?.response?.data?.message);
-    } finally {
-      setIsLiking(false);
+          setLiked(!liked);
+          dispatch(setFeed(updatedPosts));
     }
-  };
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  } finally {
+    setIsLiking(false);
+  }
+};
+
+
+
 
   const closeModal = () => {
     setIsModalOpen(false);

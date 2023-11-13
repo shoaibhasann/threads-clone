@@ -38,6 +38,9 @@ const postSchema = new Schema(
         },
         username: {
           type: String
+        },
+        repliedAt: {
+          type: Date
         }
       },
     ],
