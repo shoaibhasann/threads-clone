@@ -405,18 +405,19 @@ const addComment = asyncHandler(async (req, res, next) => {
 
 
 /**
- *  @ADD_COMMENT
- *  @ROUTE @POST {{URL} /api/v1/posts/reply/:postId}
+ *  @REMOVE_COMMENT
+ *  @ROUTE @POST {{URL} /api/v1/posts/comment/:postId/:commentId}
  *  @ACESS (Authenticated)
  */
 const removeComment = asyncHandler(async (req, res, next) => {
   const { postId, commentId } = req.params;
 
-  console.log(postId, commentId);
+  if(!commentId){
+    return next(new AppError("Something went wrong, please try again later", 400));
+  }
+
 
   const post = await postModel.findById(postId);
-
-  console.log(post);
 
   if (!post) {
     return next(new AppError("Post not found"), 404);
