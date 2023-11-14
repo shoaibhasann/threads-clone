@@ -5,16 +5,11 @@ import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 
 import verifiedTick from "../../assets/verified.png";
-import { useAuth } from "../../hooks/useAuth";
 import ThreadActions from "./ThreadActions";
 
 TimeAgo.addLocale(en);
 
 function Thread({ isVerified, post, className="" }) {
-
-    const {
-      data: { _id: userId},
-    } = useAuth();
   
   const parentRef = useRef(null);
   const [lineHeight, setLineHeight] = useState(0);
@@ -89,7 +84,7 @@ function Thread({ isVerified, post, className="" }) {
             <div className="flex gap-1 items-center mb-2">
               {/* Display username */}
               <Link
-                to={`/user/${userId}`}
+                to={`/${username}/user/${post.postedBy._id}`}
                 className="font-medium tracking-normal dark:text-white cursor-pointer hover:underline"
               >
                 {post.postedBy.username}
