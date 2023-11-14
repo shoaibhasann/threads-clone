@@ -5,6 +5,7 @@ import {
   followUser,
   getProfile,
   getUnfollowedFollowers,
+  getUserProfile,
   getUsers,
   unfollowUser,
 } from "../controller/user.controller.js";
@@ -18,5 +19,6 @@ router.get("/users/:userId/follow", isLoggedIn, followUser);
 router.get("/users/:userId/unfollow", isLoggedIn, unfollowUser);
 router.get("/admin", isLoggedIn, authorizedRoles("ADMIN"), getUsers);
 router.get("/unfollowed-followers", isLoggedIn, getUnfollowedFollowers);
+router.get("/user-profile/:userId", isLoggedIn, getUserProfile);
 
 export default router;

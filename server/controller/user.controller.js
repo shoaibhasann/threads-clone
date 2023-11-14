@@ -1,4 +1,5 @@
 import userModel from "../model/user.model.js";
+import postModel from "../model/post.model.js";
 import asyncHandler from "../middleware/asyncHandler.middleware.js";
 import AppError from "../util/error.util.js";
 import cloudinary from "cloudinary";
@@ -32,7 +33,7 @@ const getProfile = asyncHandler(async (req, res, next) => {
  */
 const editProfile = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
-  
+
   const { fullname, username, email, interests, bio } = req.body;
 
   if (email) {
@@ -63,7 +64,7 @@ const editProfile = asyncHandler(async (req, res, next) => {
     user.interests = interests;
   }
 
-  if(bio){
+  if (bio) {
     user.bio = bio;
   }
 
@@ -190,7 +191,6 @@ const unfollowUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 /**
  *  @GET_UNFOLLOWED_FOLLOWERS
  *  @ROUTE @GET {{URL} /api/v1/unfollowed-followers}
@@ -226,6 +226,41 @@ const getUnfollowedFollowers = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ *  @GET_USER_PROFILE
+ *  @ROUTE @GET {{URL} /api/v1/user-profile/:userId}
+ *  @ACESS (Public)
+ */
+const getUserProfile = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return next(new AppError("User id is required", 400));
+  }
+
+  const userExists = await userModel.findById(userId);
+
+  if (!userExists) {
+    return next(new AppError("User doesn't exists with given ID", 404));
+  }
+
+  const postsByUser = await postModel
+    .find({
+      postedBy: userId,
+    })
+    .populate("postedBy", "username avatar");
+
+  const userData = {
+    userDetails: userExists,
+    postsByUser,
+  };
+
+  res.status(200).json({
+    success: true,
+    message: "User profile fetched successfully",
+    data: userData,
+  });
+});
 
 /**
  *  @GET_ALL_USER
@@ -249,4 +284,5 @@ export {
   unfollowUser,
   getUnfollowedFollowers,
   getUsers,
+  getUserProfile,
 };
