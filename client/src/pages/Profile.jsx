@@ -7,15 +7,15 @@ import MainLayout from "../layouts/MainLayout";
 
 function Profile() {
 
-    const { data: { fullname, username }} = useAuth();
+    const { data } = useAuth();
 
   return (
     <>
       <MetaData
-        title={`${fullname} (@${username}) on Threads`}
+        title={`${data.fullname} (@${data.username}) on Threads`}
       />
       <MainLayout>
-        <UserHeader/>
+        <UserHeader userData={data} />
       </MainLayout>
     </>
   );

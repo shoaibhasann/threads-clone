@@ -1,14 +1,11 @@
 import { AiOutlineInstagram } from "react-icons/ai";
-import { useSelector } from "react-redux";
 
 import verifiedTick from "../../assets/verified.png";
 
-function UserHeader() {
-
-  const userData = useSelector((state) => state?.auth?.data);
+function UserHeader({ userData }) {
 
   return (
-    <div className="pt-3 px-3 sm:pt-0 sm:mt-6">
+    <div className="pt-3 px-3 sm:pt-0 py-4 sm:mt-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-black dark:text-slate-50 font-bold text-xl sm:text-2xl tracking-wide mb-1">
@@ -34,27 +31,33 @@ function UserHeader() {
           />
 
           {/* conditional rendering for showing blue tick  */}
-          {userData.subscription &&
+          {/* {userData.subscription && 
           userData.subscription.status === "fulfilled" ? (
             <span className="absolute bottom-0 end-0 block p-2 rounded-full transform  translate-x-1/2 bg-white dark:bg-slate-900 dark:ring-slate-900">
               <img className="w-4" src={verifiedTick} alt="" />
             </span>
-          ) : null}
+          ) : null} */}
+
+          <span className="absolute bottom-0 end-0 block p-2 rounded-full transform  translate-x-1/2 bg-white dark:bg-slate-900 dark:ring-slate-900">
+            <img className="w-4" src={verifiedTick} alt="verified-tick" />
+          </span>
         </div>
       </div>
 
       <div className="mb-3">
         <p className="w-2/3 dark:text-gray-50">
-          {userData.bio ? userData.bio : "Bio not updated yet."}
+          {userData !== undefined ? userData.bio : "Bio not updated yet."}
         </p>
       </div>
 
       <div className="flex justify-between items-center">
         <div>
-          <span className="text-[#434343] font-medium hover:underline cursor-pointer">
-            {userData?.follower.length} follower
-            {userData.follower.length > 1 ? "s" : ""}
-          </span>
+          {userData.follower && (
+            <span className="text-[#434343] font-medium hover:underline cursor-pointer">
+              {userData?.follower.length} follower
+              {userData.follower.length > 1 ? "s" : ""}
+            </span>
+          )}
         </div>
         <a href="http://instagram.com" target="_blank" rel="noreferrer">
           <AiOutlineInstagram className="dark:text-white text-3xl font-medium cursor-pointer" />
