@@ -14,9 +14,11 @@ import CommentModal from "./CommentModal.jsx";
 
 function ThreadActions({ post }) {
   const dispatch = useDispatch();
+
   const {
     data: { _id: userId },
   } = useAuth();
+
   const { feed: posts } = useSelector((state) => state?.thread);
 
   const [liked, setLiked] = useState(post.likes.includes(userId));
@@ -25,39 +27,35 @@ function ThreadActions({ post }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to handle like & unlike flow
-const handleLikeAndUnlike = async () => {
-  if (isLiking) return;
-  setIsLiking(true);
+  const handleLikeAndUnlike = async () => {
+    if (isLiking) return;
+    setIsLiking(true);
 
-  try {
-    const response = await dispatch(likeUnlikeThread(post._id));
+    try {
+      const response = await dispatch(likeUnlikeThread(post._id));
 
-    if(response?.payload?.success){
-      
-          const updatedPosts = posts.map((p) => {
-            if (p._id === post._id) {
-              return {
-                ...p,
-                likes: liked
-                  ? p.likes.filter((like) => like !== userId)
-                  : [...p.likes, userId],
-              };
-            }
-            return p;
-          });
+      if (response?.payload?.success) {
+        const updatedPosts = posts.map((p) => {
+          if (p._id === post._id) {
+            return {
+              ...p,
+              likes: liked
+                ? p.likes.filter((like) => like !== userId)
+                : [...p.likes, userId],
+            };
+          }
+          return p;
+        });
 
-          setLiked(!liked);
-          dispatch(setFeed(updatedPosts));
+        setLiked(!liked);
+        dispatch(setFeed(updatedPosts));
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setIsLiking(false);
     }
-  } catch (error) {
-    toast.error(error?.response?.data?.message);
-  } finally {
-    setIsLiking(false);
-  }
-};
-
-
-
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);

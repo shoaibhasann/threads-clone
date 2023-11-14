@@ -13,7 +13,7 @@ TimeAgo.addLocale(en);
 function Thread({ isVerified, post, className="" }) {
 
     const {
-      data: { _id: userId },
+      data: { _id: userId},
     } = useAuth();
   
   const parentRef = useRef(null);
@@ -38,6 +38,8 @@ function Thread({ isVerified, post, className="" }) {
      // Handle the case where the post or its properties are not available
      return null; // or some other fallback content
    }
+
+   const username = post.postedBy.username;
 
   return (
     <div
@@ -86,7 +88,10 @@ function Thread({ isVerified, post, className="" }) {
           <div className="flex items-center justify-between">
             <div className="flex gap-1 items-center mb-2">
               {/* Display username */}
-              <Link to={`/user/${userId}`} className="font-medium tracking-normal dark:text-white cursor-pointer hover:underline">
+              <Link
+                to={`/user/${userId}`}
+                className="font-medium tracking-normal dark:text-white cursor-pointer hover:underline"
+              >
                 {post.postedBy.username}
               </Link>
               {/* Blue tick */}
@@ -112,7 +117,7 @@ function Thread({ isVerified, post, className="" }) {
 
         {/* Thread thumbnail */}
         {post && post.thumbnail && (
-          <Link to={`/thread/${post._id}`}>
+          <Link to={`/${username}/thread/${post._id}`}>
             <img
               className="rounded-lg border border-dark-text max-h-[400px] mb-2 cursor-pointer"
               src={post.thumbnail.secure_url}
@@ -126,7 +131,7 @@ function Thread({ isVerified, post, className="" }) {
         <div className="h-6 text-gray-500 flex items-center justify-start gap-2">
           {post && post.replies && post.replies.length > 0 && (
             <Link
-              to={`/thread/${post._id}`}
+              to={`/${username}/thread/${post._id}`}
               className="cursor-pointer hover:underline"
             >
               {post.replies.length}{" "}
@@ -134,13 +139,11 @@ function Thread({ isVerified, post, className="" }) {
             </Link>
           )}
 
-          {post.replies.length > 0 && post.likes.length > 0 && (
-            <span>.</span>
-          )}
+          {post.replies.length > 0 && post.likes.length > 0 && <span>.</span>}
 
           {post && post.likes && post.likes.length > 0 && (
             <Link
-              to={`/thread/${post._id}`}
+              to={`/${username}/thread/${post._id}`}
               className="cursor-pointer hover:underline"
             >
               {post.likes.length} {"like" + (post.likes.length > 1 ? "s" : "")}

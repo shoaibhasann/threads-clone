@@ -7,6 +7,7 @@ import MainLayout from "../layouts/MainLayout.jsx";
 import { getFeed } from "../store/slices/ThreadSlice.js";
 
 function Home() {
+
 const dispatch = useDispatch();
 
   useEffect(() => {

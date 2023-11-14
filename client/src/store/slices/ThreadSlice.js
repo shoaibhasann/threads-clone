@@ -3,6 +3,35 @@ import { toast } from "react-hot-toast";
 
 import axiosInstance from "../../helpers/AxiosInstance";
 
+// Thunk function to delete comment
+export const deleteComment = createAsyncThunk("/thread/comment-delete", async (data) => {
+  try {
+    const res =  axiosInstance.delete(`/posts/comment/${data.postId}/${data.commentId}`);
+    toast.promise(
+      res,
+      {
+        loading: "deleting...",
+        success: "Comment deleted",
+        error: "Comment deleting failed",
+      },
+      {
+        duration: 1000,
+        style: {
+          borderRadius: "4px",
+          background: "#000",
+          color: "#fff",
+          fontSize: "16px",
+          padding: "10px 30px",
+        },
+      }
+    );
+
+    return (await res).data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
+
 
 // Thunk function to drop reply or comment on thread
 export const dropComment = createAsyncThunk("/thread/drop-comment", async (data) => {
