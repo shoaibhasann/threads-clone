@@ -402,6 +402,44 @@ const addComment = asyncHandler(async (req, res, next) => {
   });
 
 });
+
+
+/**
+ *  @ADD_COMMENT
+ *  @ROUTE @POST {{URL} /api/v1/posts/reply/:postId}
+ *  @ACESS (Authenticated)
+ */
+const removeComment = asyncHandler(async (req, res, next) => {
+  const { postId, commentId } = req.params;
+
+  console.log(postId, commentId);
+
+  const post = await postModel.findById(postId);
+
+  console.log(post);
+
+  if (!post) {
+    return next(new AppError("Post not found"), 404);
+  }
+
+  // Use toString() to ensure a consistent comparison
+  const commentIndex = post.replies.findIndex(
+    (reply) => reply._id.toString() === commentId.toString()
+  );
+
+  if (commentIndex !== -1) {
+    post.replies.splice(commentIndex, 1);
+    await post.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+    });
+  }
+
+  return next(new AppError("Comment not found"), 404);
+});
+
 export {
   createPost,
   fetchPosts,
@@ -413,5 +451,6 @@ export {
   fetchFollowingFeed,
   fetchFeed,
   toggleLikeUnlike,
-  addComment
+  addComment,
+  removeComment
 };

@@ -11,7 +11,8 @@ import {
   fetchRepost,
   removePost,
   repostPost,
-  toggleLikeUnlike
+  toggleLikeUnlike,
+  removeComment
 } from "../controller/post.controller.js";
 import upload from "../middleware/multer.middleware.js";
 
@@ -28,6 +29,8 @@ router.post("/reply/:postId", isLoggedIn, addComment);
 router.put("/:id", isLoggedIn, editPost);
 router.put("/like-unlike/:postId", isLoggedIn, toggleLikeUnlike);
 router.delete("/:id", isLoggedIn, removePost);
+router.delete("/comment/:postId/:commentId", isLoggedIn, removeComment);
+
 
 
 export default router;
