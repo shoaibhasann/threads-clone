@@ -74,7 +74,7 @@ const userSchema = new Schema(
 
     bio: {
       type: String,
-      maxLength: [100, "Bio should be less than 100 characters"]
+      maxLength: [200, "Bio should be less than 200 characters"]
     },
 
     repost: [{

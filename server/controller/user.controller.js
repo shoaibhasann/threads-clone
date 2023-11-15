@@ -34,11 +34,7 @@ const getProfile = asyncHandler(async (req, res, next) => {
 const editProfile = asyncHandler(async (req, res, next) => {
   const { id } = req.user;
 
-  const { fullname, username, email, interests, bio } = req.body;
-
-  if (email) {
-    return next(new AppError("Email change are not allowed", 400));
-  }
+  const { fullname, username, bio } = req.body;
 
   const user = await userModel.findById(id);
 
@@ -58,10 +54,6 @@ const editProfile = asyncHandler(async (req, res, next) => {
     }
 
     user.username = username;
-  }
-
-  if (interests) {
-    user.interests = interests;
   }
 
   if (bio) {
