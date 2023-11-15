@@ -1,6 +1,25 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
 import axiosInstance from "../../helpers/AxiosInstance";
+
+
+// Thunk function to edit profile
+export const updateProfile = createAsyncThunk("/user/update-profile", async (data) => {
+  try {
+    const res = await axiosInstance.put("/edit-profile", data, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+
+    toast.success("Profile updated");
+
+    return res.data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
 
 // Thunk function to get user details
 export const fetchUser = createAsyncThunk("/user/get-profile", async (userId, { rejectWithValue }) => {

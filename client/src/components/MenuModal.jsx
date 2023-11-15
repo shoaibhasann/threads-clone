@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
+import { useAuth } from "../hooks/useAuth.js";
 import { useTheme } from "../hooks/useTheme.js";
 import { logout } from "../store/slices/AuthSlice.js";
 import { setTheme } from "../store/slices/ThemeSlice.js";
@@ -12,6 +13,8 @@ function MenuModal() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const { data: { username }} = useAuth()
 
   useEffect(() => {
     if (theme === "dark") {
@@ -83,7 +86,7 @@ function MenuModal() {
   };
 
   return (
-    <div className="min-w-36" ref={modalRef} style={{userSelect: "none"}}>
+    <div className="min-w-36" ref={modalRef} style={{ userSelect: "none" }}>
       <div className="flex justify-end items-center mb-2">
         <div
           className="text-2xl cursor-pointer flex flex-col justify-end items-end group"
@@ -120,7 +123,7 @@ function MenuModal() {
             About
           </li>
           <li className="border-b border-dark-text py-3 cursor-pointer px-6">
-            Report a problem
+            <Link to={`/edit-profile/${username}`}>Edit profile</Link>
           </li>
           <li onClick={handleLogout} className="py-3 cursor-pointer px-6">
             Log out

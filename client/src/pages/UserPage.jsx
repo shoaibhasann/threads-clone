@@ -40,7 +40,7 @@ function UserPage() {
         ) : (
           <>
             {data && <UserHeader userData={data} />}
-            <div className="border-t border-dark-text py-5 pb-14">
+            <div className="border-t border-dark-text pt-4 pb-14">
               {postsByUser &&
                 postsByUser.map((post) => (
                   <Thread

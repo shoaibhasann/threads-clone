@@ -63,15 +63,28 @@ function Thread({ isVerified, post, className="" }) {
               }}
             ></div>
             {/* Second Avatar */}
-            <div className="flex-shrink-0">
-              {post.replies && post.replies.length > 0 ? (
+            <div className="relative bg-white w-full">
+              {post.replies.length === 0 && <span>🥱</span>}
+              {post.replies[0] && (
                 <img
+                  className="w-6 h-6 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2"
                   src={post.replies[0].userAvatar}
                   alt="Avatar"
-                  className="w-5 h-5 rounded-full"
                 />
-              ) : (
-                "🥱"
+              )}
+              {post.replies[1] && (
+                <img
+                  className="w-5 h-5 rounded-full absolute top-full left-1/4 transform -translate-x-1/2 -translate-y-1/2"
+                  src={post.replies[1].userAvatar}
+                  alt="Avatar"
+                />
+              )}
+              {post.replies[2] && (
+                <img
+                  className="w-4 h-4 rounded-full absolute top-full right-1/4 transform translate-x-1/2 -translate-y-1/2"
+                  src={post.replies[2].userAvatar}
+                  alt="Avatar"
+                />
               )}
             </div>
           </div>

@@ -21,6 +21,16 @@ const initialState = {
     : {},
 };
 
+// Thunk function to get user data
+export const getUserData = createAsyncThunk("/auth/get-data", async (_, { rejectWithValue }) => {
+  try {
+    const res = await axiosInstance.get("/me");
+
+    return res.data;
+  } catch (error) {
+    return rejectWithValue(error?.response?.data?.message);
+  }
+});
 
 // thunk function to create new account
 export const createAccount = createAsyncThunk(
@@ -118,6 +128,15 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
         state.data = {};
         state.role = "";
+      })
+      .addCase(getUserData.pending, (state) => {
+        updateStateOnAuthPending(state);
+      })
+      .addCase(getUserData.fulfilled, (state, action) => {
+        updateStateOnAuthSuccess(state, action);
+      })
+      .addCase(getUserData.rejected, (state) => {
+        updateStateOnAuthFail(state);
       });
   },
 });
