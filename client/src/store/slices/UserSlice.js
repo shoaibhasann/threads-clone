@@ -4,6 +4,30 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../helpers/AxiosInstance";
 
 
+// Thunk function to unfollow user
+export const unfollowUser = createAsyncThunk("/user/unfollow", async (userId) => {
+  try {
+    const res = await axiosInstance.get(`/users/${userId}/unfollow`);
+
+    return res.data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
+
+
+// Thunk function to follow user
+export const followUser = createAsyncThunk("/user/follow", async (userId) => {
+  try {
+    const res = await axiosInstance.get(`/users/${userId}/follow`);
+
+    return res.data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
+
+
 // Thunk function to edit profile
 export const updateProfile = createAsyncThunk("/user/update-profile", async (data) => {
   try {

@@ -1,8 +1,30 @@
 import { AiOutlineInstagram } from "react-icons/ai";
+import { useDispatch } from "react-redux";
 
 import verifiedTick from "../../assets/verified.png";
+import { useAuth } from "../../hooks/useAuth";
+import { getUserData } from "../../store/slices/AuthSlice";
+import { fetchUser, followUser, unfollowUser } from "../../store/slices/UserSlice";
 
 function UserHeader({ userData }) {
+
+  const dispatch = useDispatch();
+
+  const { data: currentUser } = useAuth();
+
+  const isAlreadyFollow = currentUser.following.includes(userData._id);
+
+  const handleFollowRequest = async () => {
+    await  dispatch(followUser(userData._id));
+    await dispatch(fetchUser(userData._id));
+    await dispatch(getUserData());
+  }
+
+  const handleUnfollowRequest = async () => {
+    await dispatch(unfollowUser(userData._id));
+    await dispatch(fetchUser(userData._id));
+    await dispatch(getUserData());
+  }
 
   return (
     <div className="pt-3 px-3 sm:pt-0 py-4 sm:mt-6">
@@ -62,6 +84,25 @@ function UserHeader({ userData }) {
         <a href="http://instagram.com" target="_blank" rel="noreferrer">
           <AiOutlineInstagram className="dark:text-white text-3xl font-medium cursor-pointer" />
         </a>
+      </div>
+
+      <div className="my-3">
+        {currentUser._id !== userData._id &&
+          (isAlreadyFollow ? (
+            <button
+              onClick={handleUnfollowRequest}
+              className="dark:bg-white dark:text-black w-full rounded-lg font-medium text-base p-1"
+            >
+              Unfollow
+            </button>
+          ) : (
+            <button
+              onClick={handleFollowRequest}
+              className="bg-black text-white dark:bg-white dark:text-black w-full rounded-lg font-medium text-base p-1"
+            >
+              Follow
+            </button>
+          ))}
       </div>
     </div>
   );

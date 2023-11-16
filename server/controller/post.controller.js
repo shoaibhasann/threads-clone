@@ -301,9 +301,7 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
   const followingUsers = user.following;
 
   const feed = await postModel
-    .find({
-      postedBy: { $nin: [...followingUsers, id]},
-    })
+    .find()
     .sort({ createdAt: -1 })
     .populate("postedBy", "username avatar")
 
