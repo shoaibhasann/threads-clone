@@ -102,6 +102,7 @@ const editProfile = asyncHandler(async (req, res, next) => {
  *  @ACESS (Public)
  */
 const followUser = asyncHandler(async (req, res, next) => {
+  
   const { userId } = req.params; // User ID of the user to follow
 
   const { id } = req.user;
