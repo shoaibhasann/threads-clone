@@ -31,8 +31,12 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!loginData.username || !loginData.password) {
-      toast.error("Please fill all the details.");
+    if(!loginData.username){
+      toast.error("Please enter username");
+    }
+
+    if(!loginData.password){
+      toast.error("Please enter password");
     }
 
     const response = await dispatch(login(loginData));
@@ -92,7 +96,7 @@ function Login() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute text-xl top-1/2 transform -translate-y-1/2 right-2 flex items-center"
             >
-              {showPassword ? <BiHide /> : <BiShowAlt />}
+              { showPassword ? <BiHide /> : <BiShowAlt />}
             </button>
           </div>
         </div>
