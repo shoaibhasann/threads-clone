@@ -42,7 +42,7 @@ function Header (){
             isActive ? "dark:text-white" : "text-dark-text"
           }
         >
-          <FiEdit className="text-3xl" />
+          <FiEdit size={26} />
         </NavLink>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">

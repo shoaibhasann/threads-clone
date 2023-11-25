@@ -63,11 +63,15 @@ function Thread({ isVerified, post, className="" }) {
               }}
             ></div>
             {/* Second Avatar */}
-            <div className="relative bg-white w-full">
-              {post.replies.length === 0 && <span>🥱</span>}
+            <div className="relative bg-transparent w-full">
+              {post.replies.length === 0 && (
+                <span className="w-6 h-6 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2">
+                  🥱
+                </span>
+              )}
               {post.replies[0] && (
                 <img
-                  className="w-6 h-6 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2"
+                  className="w-6 h-6 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2 my-2"
                   src={post.replies[0].userAvatar}
                   alt="Avatar"
                 />
