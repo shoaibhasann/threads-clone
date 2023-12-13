@@ -4,7 +4,7 @@ import asyncHandler from "../middleware/asyncHandler.middleware.js";
 import AppError from "../util/error.util.js";
 import fs from "fs/promises";
 import cloudinary from "cloudinary";
-import mongoose from "mongoose";
+
 
 /**
  *  @CREATE_POST
@@ -298,8 +298,6 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
     return next(new AppError("User not found", 404));
   }
 
-  const followingUsers = user.following;
-
   const feed = await postModel
     .find()
     .sort({ createdAt: -1 })
@@ -315,6 +313,8 @@ const fetchFeed = asyncHandler(async (req, res, next) => {
     feed,
   });
 });
+
+
 
 /**
  *  @TOGGLE_LIKE
