@@ -4,6 +4,17 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../helpers/AxiosInstance";
 
 
+// Thunk function to get unfollow followers
+export const getUnfollowedFollowers = createAsyncThunk("/user/unfollowed-followers", async() => {
+  try {
+    const res = await axiosInstance.get("/users/unfollowed-followers");
+
+    return res.data;
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+});
+
 // Thunk function to unfollow user
 export const unfollowUser = createAsyncThunk("/user/unfollow", async (userId) => {
   try {
@@ -60,6 +71,7 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     userData: {},
+    unfollowedFollowers: [],
     loading: false,
     error: null,
   },
@@ -77,6 +89,14 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = action.payload
         })
+        .addCase(getUnfollowedFollowers.pending, (state) => {
+           state.loading = true;
+        })
+        .addCase(getUnfollowedFollowers.fulfilled, (state, action) => {
+          state.loading = false;
+          state.unfollowedFollowers = action.payload.userNotFollowedBack;
+        })
+
   }
 });
 

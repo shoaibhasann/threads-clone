@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 
 import MetaData from "../components/MetaData"
-import Thread from "../components/thread/Thread"
 import UserHeader from "../components/user/UserHeader"
+import UserPost from "../components/user/UserPost"
 import MainLayout from "../layouts/MainLayout"
 import { fetchUser } from "../store/slices/UserSlice"
 
@@ -40,15 +40,10 @@ function UserPage() {
         ) : (
           <>
             {data && <UserHeader userData={data} />}
-            <div className="border-t border-dark-text pt-4 pb-14">
-              {postsByUser &&
-                postsByUser.map((post) => (
-                  <Thread
-                    key={post._id}
-                    post={post}
-                    isVerified={true}
-                  />
-                ))}
+
+            {/* User posts  */}
+            <div>
+              <UserPost threads={postsByUser}/>
             </div>
           </>
         )}

@@ -17,7 +17,7 @@ function Thread({ isVerified, post, className="" }) {
   useLayoutEffect(() => {
     const calculateLineHeight = () => {
       const parentHeight = parentRef.current.clientHeight;
-      const avatarHeight = 159; // Assuming this is the height of the avatar
+      const avatarHeight = 169; // Assuming this is the height of the avatar
       const remainingHeight = parentHeight - avatarHeight;
       setLineHeight(remainingHeight);
     };
@@ -71,7 +71,7 @@ function Thread({ isVerified, post, className="" }) {
               )}
               {post.replies[0] && (
                 <img
-                  className="w-6 h-6 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2 my-2"
+                  className="w-5 h-5 rounded-full absolute top-0 left-1/2 transform -translate-x-1/2 my-2"
                   src={post.replies[0].userAvatar}
                   alt="Avatar"
                 />
@@ -85,7 +85,7 @@ function Thread({ isVerified, post, className="" }) {
               )}
               {post.replies[2] && (
                 <img
-                  className="w-4 h-4 rounded-full absolute top-full right-1/4 transform translate-x-1/2 -translate-y-1/2"
+                  className="w-5 h-5 rounded-full absolute top-full right-1/4 transform translate-x-1/2 -translate-y-1/2"
                   src={post.replies[2].userAvatar}
                   alt="Avatar"
                 />
