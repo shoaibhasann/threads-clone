@@ -17,7 +17,7 @@ function Thread({ isVerified, post, className="" }) {
   useLayoutEffect(() => {
     const calculateLineHeight = () => {
       const parentHeight = parentRef.current.clientHeight;
-      const avatarHeight = 169; // Assuming this is the height of the avatar
+      const avatarHeight = window.innerWidth > 600 ? 164 : 148; // Assuming this is the height of the avatar
       const remainingHeight = parentHeight - avatarHeight;
       setLineHeight(remainingHeight);
     };
@@ -50,7 +50,7 @@ function Thread({ isVerified, post, className="" }) {
                 <img
                   src={post.postedBy.avatar.secure_url}
                   alt="Avatar"
-                  className="w-12 h-12 rounded-full"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full"
                 />
               )}
             </div>
@@ -112,7 +112,7 @@ function Thread({ isVerified, post, className="" }) {
               )}
             </div>
             {/* Thread posted time */}
-            <div className="text-dark-text font-medium">
+            <div className="text-dark-text text-sm sm:text-base font-medium">
               <ReactTimeAgo
                 date={new Date(post.createdAt).getTime()}
                 locale="en-US"

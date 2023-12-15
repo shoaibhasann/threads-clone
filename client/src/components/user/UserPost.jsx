@@ -7,18 +7,18 @@ function UserPost({ threads }) {
     const [activeTab, setActiveTab] = useState("threads");
 
   return (
-    <div className='sm:max-w-[600px] mx-auto'>
+    <div>
       {/* navigation tabs  */}
       <div
         style={{ userSelect: "none" }}
-        className="flex justify-around border-b-2 border-dark-text relative pb-3"
+        className="flex justify-around border-b-2 border-gray-500 dark:border-dark-text relative pb-3"
       >
         <h5
           onClick={() => setActiveTab("threads")}
           className={
             activeTab === "threads"
               ? "dark:text-white text-base font-medium cursor-pointer"
-              : "dark:text-gray-500 text-base font-medium cursor-pointer"
+              : "text-gray-600 text-base font-medium cursor-pointer"
           }
         >
           Threads
@@ -28,13 +28,13 @@ function UserPost({ threads }) {
           className={
             activeTab === "reposts"
               ? "dark:text-white text-base font-medium cursor-pointer"
-              : "dark:text-gray-500 text-base font-medium cursor-pointer"
+              : "text-gray-600 text-base font-medium cursor-pointer"
           }
         >
           Reposts
         </h5>
         <div
-          className={`absolute bg-white bottom-[-2px] w-[20%] h-[2.5px] rounded-lg transition-transform duration-300 ease-in-out transform ${
+          className={`absolute dark:bg-white bg-black bottom-[-2px] w-[20%] h-[2.5px] rounded-lg transition-transform duration-300 ease-in-out transform ${
             activeTab === "reposts"
               ? "translate-x-[120%]"
               : "translate-x-[-120%]"

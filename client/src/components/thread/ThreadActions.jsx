@@ -143,7 +143,7 @@ function ThreadActions({ post }) {
           ></path>
         </svg>
 
-        <RepostSVG theme={theme} />
+        <RepostSVG postId={post._id} theme={theme} />
         <ShareSVG theme={theme} />
       </div>
       <CommentModal

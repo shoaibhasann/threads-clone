@@ -60,7 +60,7 @@ function UserHeader({ userData }) {
             </span>
           ) : null} */}
 
-          <span className="absolute bottom-0 end-0 block p-2 rounded-full transform  translate-x-1/2 bg-white dark:bg-slate-900 dark:ring-slate-900">
+          <span className="absolute bottom-0 end-0 block p-2 rounded-full transform  translate-x-1/4 bg-white dark:bg-slate-900 dark:ring-slate-900">
             <img className="w-4" src={verifiedTick} alt="verified-tick" />
           </span>
         </div>
