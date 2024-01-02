@@ -3,11 +3,11 @@ import Header from "../components/Header.jsx";
 import Logo from "../components/Logo.jsx";
 import MenuModal from "../components/MenuModal.jsx";
 
-function MainLayout({ children }) {
+function MainLayout({ children, className }) {
 
 
   return (
-    <div className="min-h-screen sm:max-w-[600px] mx-auto overflow-hidden">
+    <div className={`min-h-screen sm:max-w-[600px] mx-auto overflow-hidden ${className}`}>
       <div className="fixed top-7 left-7">
         <Logo />
       </div>

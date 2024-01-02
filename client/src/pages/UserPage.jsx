@@ -7,6 +7,7 @@ import MetaData from "../components/MetaData"
 import UserHeader from "../components/user/UserHeader"
 import UserPost from "../components/user/UserPost"
 import MainLayout from "../layouts/MainLayout"
+import { getReposts } from "../store/slices/ActivitySlice"
 import { fetchUser } from "../store/slices/UserSlice"
 
 
@@ -16,17 +17,20 @@ function UserPage() {
 
   useEffect(() => {
     dispatch(fetchUser(id));
+    dispatch(getReposts(id));
   }, [dispatch, id]);
 
   const {
     userData: { userDetails: data, postsByUser },
     loading,
   } = useSelector((state) => state?.user);
+  
+  const { repostedPost } = useSelector((state) => state?.activity);
 
   return (
     <>
       <MetaData title={`${data?.fullname} (@${data?.username}) on Threads`} />
-      <MainLayout>
+      <MainLayout className="pb-10">
         {loading ? (
           <div className="flex items-center justify-center h-[65vh]">
             <RotatingLines
@@ -43,7 +47,7 @@ function UserPage() {
 
             {/* User posts  */}
             <div>
-              <UserPost threads={postsByUser}/>
+              <UserPost threads={postsByUser} reposts={repostedPost}/>
             </div>
           </>
         )}

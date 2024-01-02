@@ -222,11 +222,11 @@ const repostPost = asyncHandler(async (req, res, next) => {
 
 /**
  *  @FETCH_REPOST
- *  @ROUTE @GET {{URL} /api/v1/posts/fetch-repost}
+ *  @ROUTE @GET {{URL} /api/v1/posts/fetch-repost/:userId}
  *  @ACESS (Authenticated)
  */
 const fetchRepost = asyncHandler(async (req, res, next) => {
-  const { id: userId } = req.user;
+  const { userId } = req.params;
 
   const reposts = await userModel.findById(userId).populate({
     path: "repost",

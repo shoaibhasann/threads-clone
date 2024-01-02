@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import ActivitySliceReducer from './slices/ActivitySlice.js';
 import authSliceReducer from "./slices/AuthSlice.js";
 import themeSliceReducer from "./slices/ThemeSlice.js";
 import threadSliceReducer from "./slices/ThreadSlice.js";
@@ -11,7 +12,8 @@ const store = configureStore({
         theme: themeSliceReducer,
         auth: authSliceReducer,
         thread: threadSliceReducer,
-        user: userSliceReducer
+        user: userSliceReducer,
+        activity: ActivitySliceReducer
     },
     devTools: true,
 });

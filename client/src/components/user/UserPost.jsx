@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import Thread from '../thread/Thread.jsx';
+import Thread from "../thread/Thread.jsx";
 
-function UserPost({ threads }) {
-
-    const [activeTab, setActiveTab] = useState("threads");
+function UserPost({ threads, reposts }) {
+  const [activeTab, setActiveTab] = useState("threads");
 
   return (
     <div>
@@ -45,33 +44,34 @@ function UserPost({ threads }) {
       {/* Post data for threads & reposts */}
       <div className="overflow-hidden">
         <div
-          className="flex transition-transform duration-300"
+          className="transition-opacity duration-300"
           style={{
-            transform:
-              activeTab === "threads" ? "translateX(0)" : "translateX(100%)",
+            display: activeTab === "threads" ? "flex" : "none",
+            opacity: activeTab === "threads" ? 1 : 0,
           }}
         >
           {/* Threads posts content */}
           <div className="w-full">
-            {
-                threads && threads.map((thread) => (
-                    <Thread key={thread._id} post={thread} isVerified={true} />
-                ))
-            }
+            {threads &&
+              threads.map((thread) => (
+                <Thread key={thread._id} post={thread} isVerified={true} />
+              ))}
           </div>
         </div>
 
         <div
-          className="flex transition-transform duration-300"
+          className="transition-opacity duration-300"
           style={{
-            transform:
-              activeTab === "reposts" ? "translateX(0)" : "translateX(-100%)",
+            display: activeTab === "reposts" ? "flex" : "none",
+            opacity: activeTab === "reposts" ? 1 : 0,
           }}
         >
           {/* Reposts posts content */}
           <div className="w-full">
-            {/* Add your reposts posts content here */}
-            <p>Reposts posts go here in carousel effect.</p>
+            {reposts &&
+              reposts.map((repost) => (
+                <Thread key={repost._id} post={repost} isVerified={true} />
+              ))}
           </div>
         </div>
       </div>
@@ -79,4 +79,4 @@ function UserPost({ threads }) {
   );
 }
 
-export default UserPost
+export default UserPost;

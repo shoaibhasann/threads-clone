@@ -21,7 +21,7 @@ const router = Router();
 router.get("/following-feed", isLoggedIn, fetchFollowingFeed);
 router.get("/feed", isLoggedIn, fetchFeed);
 router.get("/repost/:id", isLoggedIn, repostPost);
-router.get("/fetch-repost", isLoggedIn, fetchRepost);
+router.get("/fetch-repost/:userId", isLoggedIn, fetchRepost);
 router.get("/", isLoggedIn, fetchPosts);
 router.get("/:id", isLoggedIn, fetchPostById);
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
