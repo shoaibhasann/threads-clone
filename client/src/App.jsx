@@ -4,7 +4,6 @@ import { Route,Routes } from "react-router-dom";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import NotFound from "./components/NotFound.jsx";
 import ThreadForm from "./components/thread/ThreadForm.jsx";
-import Activity from "./pages/Activity.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -23,7 +22,6 @@ function App() {
       <Route exact path="/login" element={<Login />} />
       <Route element={<RequireAuth />}>
         <Route path="/" element={<Home />} />
-        <Route path="/activity" element={<Activity />} />
         <Route path="/new-thread" element={<ThreadForm />} />
         <Route path="/:username/thread/:id" element={<ThreadDetail />} />
         <Route path="/:username/user/:id" element={<UserPage />} />
