@@ -2,9 +2,13 @@ import { FiEdit } from "react-icons/fi";
 import { GoHeart, GoHeartFill, GoHome, GoHomeFill, GoPerson, GoPersonFill, GoSearch } from "react-icons/go";
 import { NavLink, useLocation } from "react-router-dom";
 
+import { useAuth } from "../hooks/useAuth";
+
 function Header (){
 
   const location = useLocation();
+
+  const { data } = useAuth();
 
   return (
     <div
@@ -61,12 +65,12 @@ function Header (){
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
-          to="/profile"
+          to={`/${data?.username}/user/${data?._id}`}
           className={({ isActive }) =>
             isActive ? "dark:text-white" : "text-dark-text"
           }
         >
-          {location.pathname === "/profile" ? (
+          {location.pathname === `/${data?.username}/user/${data?._id}` ? (
             <GoPersonFill className="text-3xl" />
           ) : (
             <GoPerson className="text-3xl" />

@@ -1,6 +1,6 @@
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 
@@ -9,36 +9,45 @@ import ThreadActions from "./ThreadActions";
 
 TimeAgo.addLocale(en);
 
-function Thread({ isVerified, post, className="" }) {
-  
-  const parentRef = useRef(null);
+function Thread({ isVerified, post, className = "", isActiveTab }) {
+  const imageRef = useRef(null);
   const [lineHeight, setLineHeight] = useState(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const calculateLineHeight = () => {
-      const parentHeight = parentRef.current.clientHeight;
-      const avatarHeight = window.innerWidth > 600 ? 164 : 148; // Assuming this is the height of the avatar
-      const remainingHeight = parentHeight - avatarHeight;
-      setLineHeight(remainingHeight);
+      if (imageRef.current) {
+        const imageHeight = imageRef.current.getBoundingClientRect().height;
+        setLineHeight(imageHeight);
+      } else {
+        setLineHeight(34);
+      }
     };
 
-    // Delay the calculation to ensure the DOM has rendered
-    const timeoutId = setTimeout(calculateLineHeight, 0);
+    // Trigger the calculation when the component mounts
+    calculateLineHeight();
 
-    // Clean up the timeout to avoid memory leaks
-    return () => clearTimeout(timeoutId);
-  }, [parentRef]);
+    // Attach the event listener for window resize or other relevant events
+    const handleResize = () => {
+      calculateLineHeight();
+    };
 
-   if (!post || !post.postedBy) {
-     // Handle the case where the post or its properties are not available
-     return null; // or some other fallback content
-   }
+    window.addEventListener("resize", handleResize);
 
-   const username = post.postedBy.username;
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [imageRef, isActiveTab]);
+
+  if (!post || !post.postedBy) {
+    // Handle the case where the post or its properties are not available
+    return null; // or some other fallback content
+  }
+
+  const username = post.postedBy.username;
 
   return (
     <div
-      ref={parentRef}
       className={`grid grid-cols-[1fr_6fr] gap-2 mx-1 p-3 py-4 sm:p-6 bg-transparent border-b border-dark-text sm:mx-auto ${className}`}
     >
       {post && (
@@ -131,6 +140,7 @@ function Thread({ isVerified, post, className="" }) {
         {post && post.thumbnail && (
           <Link to={`/${username}/thread/${post._id}`}>
             <img
+              ref={imageRef}
               className="rounded-lg border border-dark-text max-h-[400px] mb-2 cursor-pointer"
               src={post.thumbnail.secure_url}
               alt="thumbnail"

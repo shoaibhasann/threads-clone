@@ -56,6 +56,11 @@ function UserPost({ threads, reposts }) {
               threads.map((thread) => (
                 <Thread key={thread._id} post={thread} isVerified={true} />
               ))}
+            {threads && threads.length === 0 && (
+              <h1 className="dark:text-white text-lg text-center mt-4">
+                No posts found
+              </h1>
+            )}
           </div>
         </div>
 
@@ -70,8 +75,18 @@ function UserPost({ threads, reposts }) {
           <div className="w-full">
             {reposts &&
               reposts.map((repost) => (
-                <Thread key={repost._id} post={repost} isVerified={true} />
+                <Thread
+                  key={repost._id}
+                  post={repost}
+                  isVerified={true}
+                  isActiveTab={activeTab === "reposts"}
+                />
               ))}
+            {reposts && reposts.length === 0 && (
+              <h1 className="dark:text-white text-lg text-center mt-4">
+                No posts found
+              </h1>
+            )}
           </div>
         </div>
       </div>

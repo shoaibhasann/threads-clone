@@ -12,6 +12,7 @@ import {
 } from "../../store/slices/ThreadSlice.js";
 import CommentModal from "./CommentModal.jsx";
 
+
 function ThreadActions({ post }) {
   const dispatch = useDispatch();
 

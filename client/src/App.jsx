@@ -8,7 +8,6 @@ import Activity from "./pages/Activity.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
-import Profile from "./pages/Profile.jsx";
 import Signup from "./pages/Signup.jsx";
 import ThreadDetail from "./pages/ThreadDetail.jsx";
 import UserPage from "./pages/UserPage.jsx";
@@ -24,7 +23,6 @@ function App() {
       <Route exact path="/login" element={<Login />} />
       <Route element={<RequireAuth />}>
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/activity" element={<Activity />} />
         <Route path="/new-thread" element={<ThreadForm />} />
         <Route path="/:username/thread/:id" element={<ThreadDetail />} />
