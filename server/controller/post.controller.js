@@ -117,9 +117,6 @@ const fetchPostById = asyncHandler(async (req, res, next) => {
 const editPost = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { content } = req.body;
-  
-  console.log(id);
-  console.log(content);
 
   const post = await postModel.findById(id);
 
