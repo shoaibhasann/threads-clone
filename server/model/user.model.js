@@ -57,11 +57,6 @@ const userSchema = new Schema(
       default: "USER",
     },
 
-    subscription: {
-      id: String,
-      status: String,
-    },
-
     follower: [{
       type: Schema.Types.ObjectId, 
       ref: "User"

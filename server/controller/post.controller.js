@@ -117,6 +117,9 @@ const fetchPostById = asyncHandler(async (req, res, next) => {
 const editPost = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const { content } = req.body;
+  
+  console.log(id);
+  console.log(content);
 
   const post = await postModel.findById(id);
 
@@ -175,9 +178,19 @@ const removePost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  await cloudinary.v2.uploader.destroy(postExists.thumbnail.public_id);
+  if(postExists.thumbnail && postExists.thumbnail.public_id){
+    await cloudinary.v2.uploader.destroy(postExists.thumbnail.public_id);
+  }
 
-  await postModel.findByIdAndDelete(id);
+  const isDeleted = await postModel.findByIdAndDelete(id);
+
+  if(isDeleted){
+    // updating user's reposted post
+    await userModel.updateMany(
+      { repost: id },
+      { $pull: { repost: id }}
+    )
+  }
 
   res.status(200).json({
     success: true,
@@ -191,6 +204,7 @@ const removePost = asyncHandler(async (req, res, next) => {
  *  @ACESS (Authenticated)
  */
 const repostPost = asyncHandler(async (req, res, next) => {
+  
   const { id: userId } = req.user;
 
   const { id } = req.params;

@@ -26,7 +26,7 @@ router.get("/", isLoggedIn, fetchPosts);
 router.get("/:id", isLoggedIn, fetchPostById);
 router.post("/", isLoggedIn, upload.single("thumbnail"), createPost);
 router.post("/reply/:postId", isLoggedIn, addComment);
-router.put("/:id", isLoggedIn, editPost);
+router.put("/:id", isLoggedIn, upload.single("thumbnail"), editPost);
 router.put("/like-unlike/:postId", isLoggedIn, toggleLikeUnlike);
 router.delete("/:id", isLoggedIn, removePost);
 router.delete("/comment/:postId/:commentId", isLoggedIn, removeComment);
