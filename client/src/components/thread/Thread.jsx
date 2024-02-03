@@ -1,17 +1,30 @@
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import ReactTimeAgo from "react-time-ago";
 
 import verifiedTick from "../../assets/verified.png";
+import { useAuth } from "../../hooks/useAuth";
+import { deleteThread, setFeed } from "../../store/slices/ThreadSlice";
+import Dropdown from "../Dropdown";
 import ThreadActions from "./ThreadActions";
 
+// setup javascript-time-ago library
 TimeAgo.addLocale(en);
 
 function Thread({ isVerified, post, className = "", isActiveTab }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const imageRef = useRef(null);
   const [lineHeight, setLineHeight] = useState(0);
+
+  // getting current loggedin user details
+  const { data } = useAuth();
+
+  // get feed posts
+  const { feed: feedPosts } = useSelector((state) => state?.thread);
 
   useEffect(() => {
     const calculateLineHeight = () => {
@@ -41,10 +54,28 @@ function Thread({ isVerified, post, className = "", isActiveTab }) {
 
   if (!post || !post.postedBy) {
     // Handle the case where the post or its properties are not available
-    return null; // or some other fallback content
+    return <h1 className="dark:text-white text-lg">Sorry, post not available</h1>;
   }
 
+  // username posted thread post
   const username = post.postedBy.username;
+
+  const handleDeletePost = () => {
+    const isDelete = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if(isDelete){
+      const updatedPosts = feedPosts.filter((p) => p._id !== post._id);
+      // delete post from server
+      dispatch(deleteThread(post._id));
+      // delete post from state
+      dispatch(setFeed(updatedPosts));
+    }
+  };
+
+  const handleEditPost = () => {
+    navigate("/edit-thread", { state: post });
+  }
 
   return (
     <div
@@ -121,12 +152,15 @@ function Thread({ isVerified, post, className = "", isActiveTab }) {
               )}
             </div>
             {/* Thread posted time */}
-            <div className="text-dark-text text-sm sm:text-base font-medium">
+            <div className="text-dark-text text-sm font-medium flex items-center justify-center gap-3">
               <ReactTimeAgo
                 date={new Date(post.createdAt).getTime()}
                 locale="en-US"
                 timeStyle="twitter"
               />
+              {data.username === username ? (
+                <Dropdown onDelete={handleDeletePost} onEdit={handleEditPost} />
+              ) : null}
             </div>
           </div>
         )}

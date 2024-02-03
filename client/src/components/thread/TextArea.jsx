@@ -1,6 +1,6 @@
 import  { useEffect, useRef } from "react";
 
-function TextArea({ onChangeText }) {
+function TextArea({ defaultValue, onChangeText }) {
 
     const textareaRef = useRef(null);
 
@@ -21,6 +21,7 @@ function TextArea({ onChangeText }) {
       className="w-full border-none focus:ring-0 focus:outline-none bg-transparent dark:text-gray-200 resize-none dark:caret-white"
       name="thread-content"
       id="thread-content"
+      value={defaultValue}
       style={{ overflowY: "hidden" }}
       placeholder="Start a thread..."
     ></textarea>

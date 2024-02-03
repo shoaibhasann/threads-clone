@@ -27,7 +27,7 @@ function ThreadForm() {
 
   // Accessing user's data
   const {
-    data: { avatar, username }
+    data: { avatar, username, _id : userId }
   } = useAuth();
 
   const [content, setContent] = useState("");
@@ -70,7 +70,7 @@ function ThreadForm() {
    const resposne = await dispatch(createThread(thread));
 
    if(resposne?.payload?.success){
-    navigate("/profile");
+    navigate(`/${username}/user/${userId}`);
    }
   } 
 

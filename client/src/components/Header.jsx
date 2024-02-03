@@ -1,6 +1,6 @@
 import { FiEdit } from "react-icons/fi";
-import { GoHeart, GoHeartFill, GoHome, GoHomeFill, GoPerson, GoPersonFill, GoSearch } from "react-icons/go";
-import { NavLink, useLocation } from "react-router-dom";
+import { GoHeart, GoHome, GoHomeFill, GoPerson, GoPersonFill, GoSearch } from "react-icons/go";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -30,14 +30,12 @@ function Header (){
         </NavLink>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
-        <NavLink
-          to="/search"
-          className={({ isActive }) =>
-            isActive ? "dark:text-white" : "text-dark-text"
-          }
+        <Link
+          to="/"
+          className="text-dark-text"
         >
           <GoSearch className="text-3xl" />
-        </NavLink>
+        </Link>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink
@@ -50,18 +48,12 @@ function Header (){
         </NavLink>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
-        <NavLink
-          to="/activity"
-          className={({ isActive }) =>
-            isActive ? "dark:text-white" : "text-dark-text"
-          }
+        <Link
+          to="/"
+          className="text-dark-text"
         >
-          {location.pathname === "/activity" ? (
-            <GoHeartFill className="text-3xl" />
-          ) : (
             <GoHeart className="text-3xl" />
-          )}
-        </NavLink>
+        </Link>
       </div>
       <div className="rounded-lg cursor-pointer sm:hover:bg-gray-100 sm:dark:hover:bg-dark-secondary  sm:px-8 sm:py-4">
         <NavLink

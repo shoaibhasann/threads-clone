@@ -8,7 +8,7 @@ function MainLayout({ children, className }) {
 
   return (
     <div className={`min-h-screen sm:max-w-[600px] mx-auto overflow-hidden ${className}`}>
-      <div className="fixed top-7 left-7">
+      <div className="absolute sm:fixed top-7 left-7">
         <Logo />
       </div>
       <div className="fixed top-8 right-7 z-50">

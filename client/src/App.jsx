@@ -5,6 +5,7 @@ import RequireAuth from "./components/auth/RequireAuth.jsx";
 import NotFound from "./components/NotFound.jsx";
 import ThreadForm from "./components/thread/ThreadForm.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
+import EditThread from "./pages/EditThread.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
@@ -23,6 +24,7 @@ function App() {
       <Route element={<RequireAuth />}>
         <Route path="/" element={<Home />} />
         <Route path="/new-thread" element={<ThreadForm />} />
+        <Route path="/edit-thread" element={<EditThread/>} />
         <Route path="/:username/thread/:id" element={<ThreadDetail />} />
         <Route path="/:username/user/:id" element={<UserPage />} />
         <Route path="/edit-profile/:username" element={<EditProfile />} />
@@ -32,4 +34,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
