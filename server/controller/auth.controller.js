@@ -93,13 +93,13 @@ const register = asyncHandler(async (req, res, next) => {
   // Generating jwt token
   const token = await user.generateToken();
 
-  res.cookie("token", token, cookieOptions);
-
   res.status(201).json({
-    success: true,
-    message: "Registered successfully!",
-    user,
-  });
+  success: true,
+  message: "Registered successfully!",
+  token,
+  user,
+});
+
 });
 
 /**
@@ -133,13 +133,13 @@ const login = asyncHandler(async (req, res, next) => {
   // Generate token
   const token = await userExists.generateToken();
 
-  res.cookie("token", token, cookieOptions);
+ res.status(200).json({
+  success: true,
+  message: "Logged in successfully",
+  token,
+  user: userExists,
+});
 
-  res.status(200).json({
-    success: true,
-    message: "Loggedin successfully",
-    user: userExists,
-  });
 });
 
 /**
