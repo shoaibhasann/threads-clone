@@ -147,17 +147,10 @@ const login = asyncHandler(async (req, res, next) => {
  *  @ROUTE @GET {{URL} /api/v1/auth/logout}
  *  @ACESS (Public)
  */
-const logout = asyncHandler(async (req, res, next) => {
-  res.cookie("token", null, {
-    sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
-    secure: process.env.NODE_ENV === "Development" ? false : true,
-    maxAge: 0,
-    httpOnly: true,
-  });
-
+const logout = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Logged out successfully!",
+    message: "Logged out successfully",
   });
 });
 
