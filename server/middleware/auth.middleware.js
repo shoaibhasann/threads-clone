@@ -5,35 +5,35 @@ import JWT from "jsonwebtoken";
 
 // function to check authentication
 const isLoggedIn = asyncHandler(async (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    const { token } = req.cookies;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return next(new AppError("Unauthenticated, please login again", 401));
+  }
 
-    if(!token){
-        return next(new AppError("Unauthenticated, please login again", 401));
-    }
+  const token = authHeader.split(" ")[1];
+  const decodedToken = JWT.verify(token, process.env.JWT_SECRET);
 
-    const decodedToken = await JWT.verify(token, process.env.JWT_SECRET);
-
-    req.user = decodedToken;
-
-    next();
-
+  req.user = decodedToken;
+  next();
 });
+
 
 const authorizedRoles = (...roles) =>
   asyncHandler(async (req, res, next) => {
-    const { id } = req.user;
+    if (!req.user || !req.user.role) {
+      return next(new AppError("Unauthorized access", 401));
+    }
 
-    const acessUser = await userModel.findById(id);
-
-    if (!roles.includes(acessUser.role)) {
+    if (!roles.includes(req.user.role)) {
       return next(
-        new AppError("You don't have permission to acess this route.", 403)
+        new AppError("You don't have permission to access this route", 403)
       );
     }
 
     next();
   });
+
 
 export { 
     isLoggedIn,
