@@ -1,44 +1,45 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
-
 import axiosInstance from "../../helpers/AxiosInstance.js";
 
-
 const initialState = {
-
   loading: false,
 
-  isLoggedIn: localStorage.getItem("isLoggedIn")
-    ? JSON.parse(localStorage.getItem("isLoggedIn"))
-    : false,
+  token: localStorage.getItem("token") || null,
+
+  data: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : {},
 
   role: localStorage.getItem("role")
     ? JSON.parse(localStorage.getItem("role"))
     : "",
-
-  data: localStorage.getItem("data")
-    ? JSON.parse(localStorage.getItem("data"))
-    : {},
 };
 
-// Thunk function to get user data
-export const getUserData = createAsyncThunk("/auth/get-data", async (_, { rejectWithValue }) => {
-  try {
-    const res = await axiosInstance.get("/me");
+// ==========================
+// THUNKS
+// ==========================
 
-    return res.data;
-  } catch (error) {
-    return rejectWithValue(error?.response?.data?.message);
+// Get current user (rehydration)
+export const getUserData = createAsyncThunk(
+  "/auth/me",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get("/me");
+      return res.data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data?.message);
+    }
   }
-});
+);
 
-// thunk function to create new account
+// Register
 export const createAccount = createAsyncThunk(
-  "/auth/signup",
+  "/auth/register",
   async (data, { rejectWithValue }) => {
     try {
-      const res = axiosInstance.post("/auth/register", data);
-      return (await res).data;
+      const res = await axiosInstance.post("/auth/register", data);
+      return res.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
       return rejectWithValue(error?.response?.data?.message);
@@ -46,13 +47,13 @@ export const createAccount = createAsyncThunk(
   }
 );
 
-// thunk function to login user
+// Login
 export const login = createAsyncThunk(
   "/auth/login",
   async (data, { rejectWithValue }) => {
     try {
-      const res = axiosInstance.post("/auth/login", data);
-      return (await res).data;
+      const res = await axiosInstance.post("/auth/login", data);
+      return res.data;
     } catch (error) {
       toast.error(error?.response?.data?.message);
       return rejectWithValue(error?.response?.data?.message);
@@ -60,84 +61,72 @@ export const login = createAsyncThunk(
   }
 );
 
-// thunk function to logout user
+// Logout (frontend-only)
 export const logout = createAsyncThunk("/auth/logout", async () => {
-  try {
-    const res = axiosInstance.get("/auth/logout");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("role");
+  toast.success("Logged out successfully");
+});
 
-    toast.promise(
-      res,
-      {
-        loading: "Logging out...",
-        success: (response) => {
-          return response?.data?.message;
-        },
-        error: "Logout failed.",
-      });
-    return (await res).data;
-  } catch (error) {
-    toast.error(error?.response?.data?.message);
-  }
-})
+// ==========================
+// SLICE
+// ==========================
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-
-    const updateStateOnAuthPending = (state) => {
+    const pending = (state) => {
       state.loading = true;
-    }
-
-    const updateStateOnAuthSuccess = (state, action) => {
-      localStorage.setItem("data", JSON.stringify(action?.payload?.user));
-      localStorage.setItem("isLoggedIn", true);
-      localStorage.setItem("role", JSON.stringify(action?.payload?.user?.role));
-      state.loading = false;
-      state.isLoggedIn = true;
-      state.data = action?.payload?.user;
-      state.role = action?.payload?.user?.role;
     };
 
-    const updateStateOnAuthFail = (state) => {
+    const fulfilledAuth = (state, action) => {
+      const { token, user } = action.payload;
+
+      // 🔐 Save to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", JSON.stringify(user.role));
+
       state.loading = false;
-    }
+      state.token = token;
+      state.data = user;
+      state.role = user.role;
+    };
+
+    const rejected = (state) => {
+      state.loading = false;
+    };
 
     builder
-      .addCase(createAccount.pending, (state) => {
-        updateStateOnAuthPending(state);
-      })
-      .addCase(login.pending, (state) => {
-        updateStateOnAuthPending(state);
-      })
-      .addCase(createAccount.fulfilled, (state, action) => {
-        updateStateOnAuthSuccess(state, action);
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        updateStateOnAuthSuccess(state, action);
-      })
-      .addCase(createAccount.rejected, (state) => {
-        updateStateOnAuthFail(state);
-      })
-      .addCase(login.rejected, (state) => {
-        updateStateOnAuthFail(state);
-      })
+      // REGISTER
+      .addCase(createAccount.pending, pending)
+      .addCase(createAccount.fulfilled, fulfilledAuth)
+      .addCase(createAccount.rejected, rejected)
+
+      // LOGIN
+      .addCase(login.pending, pending)
+      .addCase(login.fulfilled, fulfilledAuth)
+      .addCase(login.rejected, rejected)
+
+      // LOGOUT
       .addCase(logout.fulfilled, (state) => {
-        localStorage.clear();
-        state.isLoggedIn = false;
+        state.loading = false;
+        state.token = null;
         state.data = {};
         state.role = "";
       })
-      .addCase(getUserData.pending, (state) => {
-        updateStateOnAuthPending(state);
-      })
+
+      // GET USER
+      .addCase(getUserData.pending, pending)
       .addCase(getUserData.fulfilled, (state, action) => {
-        updateStateOnAuthSuccess(state, action);
+        state.loading = false;
+        state.data = action.payload.user;
+        state.role = action.payload.user.role;
       })
-      .addCase(getUserData.rejected, (state) => {
-        updateStateOnAuthFail(state);
-      });
+      .addCase(getUserData.rejected, rejected);
   },
 });
 
