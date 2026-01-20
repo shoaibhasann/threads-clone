@@ -78,9 +78,6 @@ function MenuModal() {
   }, [isModalActive]);
 
   const handleLogout = async () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
     const response = await dispatch(logout());
     if (response?.payload?.success) {
       dispatch(clearThreadSlice());
